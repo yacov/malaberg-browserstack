@@ -19,6 +19,3 @@ This repository provides information and helpful tweaks to run your Rspec Behat 
 ###Further Reading
 - [Behat](http://docs.behat.org/en/v3.0/)
 - [BrowserStack documentation for Automate](https://www.browserstack.com/automate/php)
-
-Happy Testing!
-

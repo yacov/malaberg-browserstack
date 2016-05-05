@@ -1,0 +1,10 @@
+{
+  "require": {
+      "brianium/paratest": "dev-master",
+      "behat/behat": "2.5.*@stable",
+	    "facebook/webdriver": "dev-master"
+  },
+  "config": {
+      "bin-dir": "bin/"
+  }
+}
