@@ -8,5 +8,7 @@ F2:
 default:
     context:
         parameters:
-            tunnel: "true"
-        
+            tunnel: "false"
+    extensions:
+        shvetsgroup\ParallelRunner\Extension: 
+            process_count:  2

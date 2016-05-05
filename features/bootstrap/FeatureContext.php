@@ -14,15 +14,23 @@ class FeatureContext extends BehatContext {
   private $OS = 'Windows';
   private $OS_VERSION = '7';
   private $BROWSER_VERSION = '23.0';
-  private $USERNAME = 'BS_USERNAME'; // Set your username
-  private $BROWSERSTACK_KEY = 'BS_ACCESSKEY'; // Set your browserstack_key
+  private $USERNAME = 'BROWSERSTACK_USERNAME'; // Set your username
+  private $BROWSERSTACK_KEY = 'BROWSERSTACK_ACCESS_KEY'; // Set your browserstack_key
   private $tunnel = 'false';
-
+  private $bs_local;
   public function __construct(array $parameters){
     $this->tunnel = $parameters['tunnel'];
-    $bs_local = new Local();
-    $bs_local_args = array("key" => 'BS_USERNAME');
-    $bs_local->start(bs_local_args);
+    if ($this->tunnel == "true") {
+      $this->bs_local = new Local();
+      $bs_local_args = array("key" => 'BS_USERNAME', "forcelocal" => true);
+      $this->bs_local->start(bs_local_args);
+    }
+  }
+
+  public function __destruct() {
+    if ($this->tunnel == "true") {
+      $this->bs_local->stop();
+    }
   }
 
   /** @Given /^I am on "([^"]*)"$/ */
@@ -33,4 +41,21 @@ class FeatureContext extends BehatContext {
     $this->webDriver->get($url);
   }
 
+  /** @When /^I search for "([^"]*)"$/ */
+  public function iSearchFor($searchText) {
+    $element = $this->webDriver->findElement(WebDriverBy::name("q"));
+    if ($element) {
+      $element->sendKeys($searchText);
+      $element->submit();
+    }
+  }
+
+  /** @Then /^I get title as "([^"]*)"$/ */
+  public function iShouldGet($string) {
+    $title = $this->webDriver->getTitle();
+    if ((string)  $string !== $title) {
+      throw new Exception("Actual output is:\n". $title);
+    }
+    $this->webDriver->quit();
+  }
 }
