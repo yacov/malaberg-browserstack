@@ -6,6 +6,7 @@ use Behat\Behat\Context\BehatContext,
   Behat\Behat\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
+use BrowserStack\Local;
 
 class FeatureContext extends BehatContext {
   private $webDriver;
@@ -13,12 +14,23 @@ class FeatureContext extends BehatContext {
   private $OS = 'Windows';
   private $OS_VERSION = '7';
   private $BROWSER_VERSION = '23.0';
-  private $USERNAME = 'BS_USERNAME'; // Set your username
-  private $BROWSERSTACK_KEY = 'BS_ACCESSKEY'; // Set your browserstack_key
+  private $USERNAME = 'BROWSERSTACK_USERNAME'; // Set your username
+  private $BROWSERSTACK_KEY = 'BROWSERSTACK_ACCESS_KEY'; // Set your browserstack_key
   private $tunnel = 'false';
-
+  private $bs_local;
   public function __construct(array $parameters){
     $this->tunnel = $parameters['tunnel'];
+    if ($this->tunnel == "true") {
+      $this->bs_local = new Local();
+      $bs_local_args = array("key" => 'BS_USERNAME', "forcelocal" => true);
+      $this->bs_local->start(bs_local_args);
+    }
+  }
+
+  public function __destruct() {
+    if ($this->tunnel == "true") {
+      $this->bs_local->stop();
+    }
   }
 
   /** @Given /^I am on "([^"]*)"$/ */
