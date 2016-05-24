@@ -8,7 +8,7 @@ This repository provides information and helpful tweaks to run your Rspec Behat 
 - Run `composer install` to install the dependencies. 
 
 ###Configuration
-- Change USERNAME, BROWSERSTACK_KEY, BROWSER_NAME, BROWSER_VERSION, OS, OS_VERSION in features/bootstrap/FeatureContext.php
+- Change USERNAME, BROWSERSTACK_ACCESS_KEY, BROWSER_NAME, BROWSER_VERSION, OS, OS_VERSION in features/bootstrap/FeatureContext.php
 
 ###Run tests
 - To run this live sample test please run following command in root folder of this repository:
