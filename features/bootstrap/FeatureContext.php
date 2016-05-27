@@ -23,7 +23,7 @@ class FeatureContext extends BehatContext {
     if ($this->tunnel == "true") {
       $this->bs_local = new Local();
       $bs_local_args = array("key" => 'BS_USERNAME', "forcelocal" => true);
-      $this->bs_local->start(bs_local_args);
+      $this->bs_local->start($bs_local_args);
     }
   }
 
