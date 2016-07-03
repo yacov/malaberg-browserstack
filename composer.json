@@ -2,17 +2,17 @@
   "require": {
       "behat/behat": "2.5.*@stable",
 	    "facebook/webdriver": "dev-master",
-	    "shvetsgroup/parallelrunner": "dev-master",
-      "browserstack/local": "dev-master"
+      "browserstack/browserstack-local": "dev-master",
+      "symfony/yaml": "*"
   },
   "config": {
       "bin-dir": "bin/"
   },
   "scripts": {
-    "test": "composer test single && composer test local && composer test parallel",
-    "single": "vendor/bin/behat --config=config/single.conf.yml",
-    "local": "vendor/bin/behat --config=config/local.conf.yml",
-    "parallel": "vendor/bin/behat --config=config/parallel.conf.yml"
+    "test": "composer single && composer local && composer parallel",
+    "single": "./bin/behat --config=config/single.conf.yml",
+    "local": "./bin/behat --config=config/local.conf.yml",
+    "parallel": "CONFIG_FILE=config/parallel.conf.yml /usr/bin/env php lib/parallel.php"
   },
   "autoload": {
     "classmap": ["lib/"]

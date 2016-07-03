@@ -1,11 +1,20 @@
-F1:
-    filters:
-        tags: "@one"
-F2:
-    filters:
-        tags: "@two" 
-
 default:
+    paths:
+        features: '../features/local'
+        bootstrap:  '../features/bootstrap'
     context:
         parameters:
-            tunnel: "true"
+            browserstack:
+                server: "hub-cloud.browserstack.com"
+                user: "BROWSERSTACK_USERNAME"
+                key: "BROWSERSTACK_ACCESS_KEY"
+
+                capabilities:
+                    build: "behat-browserstack"
+                    name: "local_test"
+                    "browserstack.debug": true
+                    "browserstack.local": true
+
+                environments:
+                    -
+                        browser: "chrome"
