@@ -1,6 +1,5 @@
 {
   "require": {
-      "brianium/paratest": "dev-master",
       "behat/behat": "2.5.*@stable",
 	    "facebook/webdriver": "dev-master",
 	    "shvetsgroup/parallelrunner": "dev-master",
@@ -8,5 +7,14 @@
   },
   "config": {
       "bin-dir": "bin/"
+  },
+  "scripts": {
+    "test": "composer test single && composer test local && composer test parallel",
+    "single": "vendor/bin/behat --config=config/single.conf.yml",
+    "local": "vendor/bin/behat --config=config/local.conf.yml",
+    "parallel": "vendor/bin/behat --config=config/parallel.conf.yml"
+  },
+  "autoload": {
+    "classmap": ["lib/"]
   }
 }
