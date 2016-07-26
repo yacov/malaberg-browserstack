@@ -14,7 +14,7 @@
 - To run local tests, run `composer local`
 
 ## Notes
-* You can view your test results on the [BrowserStack automate dashboard](https://www.browserstack.com/automate)
+* You can view your test results on the [BrowserStack Automate dashboard](https://www.browserstack.com/automate)
 * To test on a different set of browsers, check out our [platform configurator](https://www.browserstack.com/automate/php#setting-os-and-browser)
 * You can export the environment variables for the Username and Access Key of your BrowserStack account
   
@@ -24,7 +24,7 @@
   ```
   
 ## Additional Resources
-* [Documentation for writing automate test scripts in PHP](https://www.browserstack.com/automate/php)
+* [Documentation for writing Automate test scripts in PHP](https://www.browserstack.com/automate/php)
 * [Customizing your tests on BrowserStack](https://www.browserstack.com/automate/capabilities)
-* [Browsers & mobile devices for selenium testing on BrowserStack](Browsers & Mobile Devices for Selenium Testing)
+* [Browsers & mobile devices for selenium testing on BrowserStack](https://www.browserstack.com/list-of-browsers-and-platforms?product=automate)
 * [Using REST API to access information about your tests via the command-line interface](https://www.browserstack.com/automate/rest-api)
