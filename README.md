@@ -1,33 +1,30 @@
-behat-browserstack
-=========
+# behat-browserstack
+[Behat](https://github.com/Behat/Behat) Integration with BrowserStack.
 
-This repository provides information and helpful tweaks to run your Rspec Behat on the BrowserStack selenium cloud infrastructure.
+![BrowserStack Logo](https://d98b8t1nnulk5.cloudfront.net/production/images/layout/logo-header.png?1469004780)
 
-###Setup
-- Install [Composer](http://getcomposer.org/doc/00-intro.md)
-- Run `composer install` to install the dependencies. 
+## Setup
+* Clone the repo
+* Install dependencies `composer install`
+* Update `*.conf.yml` files inside the `config/` directory with your [BrowserStack Username and Access Key](https://www.browserstack.com/accounts/settings)
 
-###Configuration
-- Change USERNAME, BROWSERSTACK_ACCESS_KEY, BROWSER_NAME, BROWSER_VERSION, OS, OS_VERSION in features/bootstrap/FeatureContext.php
+## Running your tests
+- To run a single test, run `composer single`
+- To run parallel tests, run `composer parallel`
+- To run local tests, run `composer local`
 
-###Run tests
-- To run this live sample test please run following command in root folder of this repository:
-```
-./bin/behat --config=behat_live.yml
-```
-
-- To run this parallel sample test please run following command in root folder of this repository:
-```
-./bin/behat --config=behat_parallel.yml
-```
-
-- To run this local sample test please run following command in root folder of this repository:
-```
-./bin/behat --config=behat_local.yml
-```
-
-You can notice the differences between the .yml files between the tests and configure your tests according to your use cases. 
-
-###Further Reading
-- [Behat](http://docs.behat.org/en/v3.0/)
-- [BrowserStack documentation for Automate](https://www.browserstack.com/automate/php)
+## Notes
+* You can view your test results on the [BrowserStack Automate dashboard](https://www.browserstack.com/automate)
+* To test on a different set of browsers, check out our [platform configurator](https://www.browserstack.com/automate/php#setting-os-and-browser)
+* You can export the environment variables for the Username and Access Key of your BrowserStack account
+  
+  ```
+  export BROWSERSTACK_USERNAME=<browserstack-username> &&
+  export BROWSERSTACK_ACCESS_KEY=<browserstack-access-key>
+  ```
+  
+## Additional Resources
+* [Documentation for writing Automate test scripts in PHP](https://www.browserstack.com/automate/php)
+* [Customizing your tests on BrowserStack](https://www.browserstack.com/automate/capabilities)
+* [Browsers & mobile devices for selenium testing on BrowserStack](https://www.browserstack.com/list-of-browsers-and-platforms?product=automate)
+* [Using REST API to access information about your tests via the command-line interface](https://www.browserstack.com/automate/rest-api)
