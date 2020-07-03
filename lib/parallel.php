@@ -14,7 +14,7 @@ $procs = array();
 foreach ($CONFIG['environments'] as $key => $value) {
     if(stripos(PHP_OS, 'WIN') === 0) {
       // Windows
-      $cmd = "set TASK_ID=$key \"./bin/behat\"& --config=". getenv("CONFIG_FILE")." 2>&1\n";
+      $cmd = "set TASK_ID=$key& \"./bin/behat\" --config=". getenv("CONFIG_FILE")." 2>&1\n";
     } else {
       // Linux or  Mac
       $cmd = "TASK_ID=$key ./bin/behat --config=". getenv("CONFIG_FILE")." 2>&1\n";
