@@ -12,7 +12,7 @@ $CONFIG = Yaml::parse(file_get_contents($config_file))["default"]["context"]["pa
 $procs = array();
 
 foreach ($CONFIG['environments'] as $key => $value) {
-    if(stripos(PHP_OS, 'WIN') === 0) {
+    if(preg_match('/win/i', PHP_OS)) {
       // Windows
       $cmd = "set TASK_ID=$key& \"./bin/behat\" --config=". getenv("CONFIG_FILE")." 2>&1\n";
     } else {
