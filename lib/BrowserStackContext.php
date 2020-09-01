@@ -24,7 +24,7 @@ class BrowserStackContext extends Behat\Behat\Context\BehatContext
         $CONFIG = $GLOBALS['CONFIG'];
         $task_id = getenv('TASK_ID') ? getenv('TASK_ID') : 0;
 
-        $url = "https://" . $GLOBALS['BROWSERSTACK_USERNAME'] . ":" . $GLOBALS['BROWSERSTACK_ACCESS_KEY'] . "@" . $CONFIG['server'] ."/wd/hub";
+        $url = "http://" . $GLOBALS['BROWSERSTACK_USERNAME'] . ":" . $GLOBALS['BROWSERSTACK_ACCESS_KEY'] . "@" . $CONFIG['server'] ."/wd/hub";
         $caps = $CONFIG['environments'][$task_id];
 
         foreach ($CONFIG["capabilities"] as $key => $value) {
