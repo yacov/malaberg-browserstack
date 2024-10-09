@@ -1,0 +1,26 @@
+default:
+  suites:
+    default:
+      paths:
+        - features
+      contexts:
+        - FeatureContext
+        - BrowserStackContext
+  extensions:
+    Behat\MinkExtension:
+      base_url: 'https://aeonstest.info'
+      sessions:
+        browserstack:
+          browser_stack:
+            username: 'iakovvolfkovich_F75ojQ'
+            access_key: 'HYAZ4DUHsvFrouzKZqyj'
+            capabilities:
+              browser: 'safari'
+              project: "Aeons Test Project"
+              build: "Behat Purchase Test"
+              name: "Purchase Test on iPhone 13"
+              os: "OS X"
+              os_version: "Monterey"
+              device: "iPhone 13"
+              emulator: false
+      default_session: browserstack
