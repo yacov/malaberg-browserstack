@@ -19,16 +19,21 @@ class CartPageContext extends MinkContext implements Context
     private CartPage $cartPage;
 
     /**
+     * @var SharedDataContext
+     */
+    private SharedDataContext $sharedData;
+
+    /**
      * Initializes context.
      */
-    public function __construct()
+    public function __construct(SharedDataContext $sharedData)
     {
         $this->cartPage = new CartPage($this->getSession());
+        $this->sharedData = $sharedData;
     }
 
     /**
-     * @Given I am on the cart page
-     * @throws Exception
+     * @Given user is on the cart page
      */
     public function userIsOnCartPage(): void
     {
@@ -37,6 +42,7 @@ class CartPageContext extends MinkContext implements Context
             throw new Exception("User is not on the cart page");
         }
     }
+    
 
     /**
      * @When user updates the quantity to :quantity
@@ -169,5 +175,22 @@ class CartPageContext extends MinkContext implements Context
         if (!$this->cartPage->isPreventedFromCheckout()) {
             throw new Exception("User was not prevented from proceeding with an empty cart");
         }
+    }
+
+      /**
+     * @Then I verify the cart contains the correct product details
+     */
+    public function iVerifyTheCartContainsTheCorrectProductDetails(): void
+    {
+        $expectedData = $this->sharedData->getMultiple(['productName', 'purchaseType', 'quantity']);
+        $this->cartPage->verifyProductDetails($expectedData);
+    }
+
+    /**
+     * @When I proceed to checkout
+     */
+    public function iProceedToCheckout(): void
+    {
+        $this->cartPage->proceedToCheckout();
     }
 }

@@ -278,4 +278,24 @@ class ProductPage extends BasePage
         }
         return $element;
     }
+    public function getProductName()
+    {
+        // Placeholder for element selector
+        $selector = 'PRODUCT_NAME_SELECTOR';
+        return $this->findElement($selector)->getText();
+    }
+
+    public function getSelectedPurchaseOption()
+    {
+        // Placeholder for element selector
+        $selector = 'SELECTED_PURCHASE_OPTION_SELECTOR';
+        return $this->findElement($selector)->getValue();
+    }
+
+    public function getQuantity()
+    {
+        // Placeholder for element selector
+        $selector = 'QUANTITY_INPUT_SELECTOR';
+        return $this->findElement($selector)->getValue();
+    }
 }

@@ -193,4 +193,27 @@ class CheckoutPage extends BasePage
     {
         parent::waitForElementVisible($selector, $timeout);
     }
+
+
+    public function getPageTitle(): string
+    {
+        return $this->session->getPage()->find('css', 'PAGE_TITLE_SELECTOR')->getText();
+    }
+
+    /**
+     * @throws ElementNotFoundException
+     */
+    public function getShippingCost(): string
+    {
+        // Placeholder for element selector
+        $selector = 'SHIPPING_COST_SELECTOR';
+        return $this->findElement($selector)->getText();
+    }
+
+    public function isProcessingPageDisplayed()
+    {
+        // Placeholder for element selector
+        $selector = 'PROCESSING_ICON_SELECTOR';
+        return $this->isElementVisible($selector);
+    }
 }

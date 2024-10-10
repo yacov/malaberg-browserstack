@@ -8,6 +8,7 @@ use Page\CartPage;
 use Page\CheckoutPage;
 use Page\HomePage;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 
 
 class FeatureContext extends RawMinkContext implements Context

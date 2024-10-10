@@ -59,4 +59,21 @@ class MainPageContext extends MinkContext implements Context
     {
         $this->homePage->clickShopNow();
     }
+
+    /**
+     * @Given I open the home page
+     */
+    public function iOpenTheHomePage(): void
+    {
+        $this->homePage->open();
+    }
+
+    /**
+     * @Given I memorize the page title
+     */
+    public function iMemorizeThePageTitle(): void
+    {
+        $title = $this->homePage->getPageTitle();
+        $this->sharedData->set('pageTitle', $title);
+    }
 }

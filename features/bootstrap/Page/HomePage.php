@@ -68,4 +68,16 @@ class HomePage extends BasePage
         $selector = 'a.btn[href="/range"]';
         return $this->findElement($selector);
     }
+
+    public function getPageTitle(): string
+    {
+        return $this->session->getPage()->find('css', 'TITLE_SELECTOR')->getText();
+    }
+
+    public function selectProduct($productName): void
+    {
+        // Placeholder for element selector
+        $selector = sprintf('PRODUCT_LINK_SELECTOR', $productName);
+        $this->clickElement($selector);
+    }
 }
