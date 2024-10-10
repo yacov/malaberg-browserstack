@@ -27,7 +27,7 @@ class FeatureContext extends RawMinkContext implements Context
      *
      * @BeforeScenario
      */
-    public function initializePageObjects(BeforeScenarioScope $scope)
+    public function initializePageObjects(BeforeScenarioScope $scope): void
     {
         $session = $this->getSession('browserstack');
         $this->productPage = new ProductPage($session);
@@ -39,16 +39,16 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @Given I have selected the product :productName
      */
-    public function iHaveSelectedTheProduct($productName)
+    public function iHaveSelectedTheProduct($productName): void
     {
-        $this->visitPath("/products/{$productName}");
+        $this->visitPath("/products/$productName");
         $this->productPage->waitForPageLoad();
     }
 
     /**
      * @When I set the quantity to :quantity
      */
-    public function iSetTheQuantityTo($quantity)
+    public function iSetTheQuantityTo($quantity): void
     {
         $this->productPage->setQuantity($quantity);
     }
@@ -56,7 +56,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I select :option
      */
-    public function iSelect($option)
+    public function iSelect($option): void
     {
         $this->productPage->selectPurchaseOption($option);
     }
@@ -71,8 +71,9 @@ class FeatureContext extends RawMinkContext implements Context
 
     /**
      * @Then the product should be added to the cart
+     * @throws ExpectationException
      */
-    public function theProductShouldBeAddedToTheCart()
+    public function theProductShouldBeAddedToTheCart(): void
     {
         $cartItems = $this->cartPage->getCartItems();
         if (empty($cartItems)) {
@@ -83,7 +84,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I navigate to the shopping cart page
      */
-    public function iNavigateToTheShoppingCartPage()
+    public function iNavigateToTheShoppingCartPage(): void
     {
         $this->visitPath("/cart");
         $this->cartPage->waitForPageLoad();
@@ -91,6 +92,7 @@ class FeatureContext extends RawMinkContext implements Context
 
     /**
      * @Then the shopping cart page should display the correct items
+     * @throws ExpectationException
      */
     public function theShoppingCartPageShouldDisplayTheCorrectItems()
     {
@@ -102,15 +104,16 @@ class FeatureContext extends RawMinkContext implements Context
 
     /**
      * @Then the cart details should show the product, quantity, unit price, total, items total, shipping, and order total
+     * @throws ExpectationException
      */
-    public function theCartDetailsShouldShowTheDetails()
+    public function theCartDetailsShouldShowTheDetails(): void
     {
         $details = $this->cartPage->getCartDetails();
 
         $requiredKeys = ['product', 'quantity', 'unit_price', 'total', 'items_total', 'shipping', 'order_total'];
         foreach ($requiredKeys as $key) {
             if (!array_key_exists($key, $details)) {
-                throw new ExpectationException("Cart detail '{$key}' is missing.", $this->getSession());
+                throw new ExpectationException("Cart detail '$key' is missing.", $this->getSession());
             }
         }
     }
@@ -118,7 +121,7 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I proceed to checkout
      */
-    public function iProceedToCheckout()
+    public function iProceedToCheckout(): void
     {
         $this->cartPage->proceedToCheckout();
         $this->checkoutPage->waitForPageLoad();
@@ -126,27 +129,29 @@ class FeatureContext extends RawMinkContext implements Context
 
     /**
      * @Then the checkout page should be displayed
+     * @throws ExpectationException
      */
-    public function theCheckoutPageShouldBeDisplayed()
+    public function theCheckoutPageShouldBeDisplayed(): void
     {
         $currentPath = parse_url($this->getSession()->getCurrentUrl(), PHP_URL_PATH);
         if ($currentPath !== '/checkout') {
-            throw new ExpectationException("Checkout page is not displayed. Current path: {$currentPath}", $this->getSession());
+            throw new ExpectationException("Checkout page is not displayed. Current path: $currentPath", $this->getSession());
         }
     }
 
     /**
      * @When I fill in the shipping information with :info
      */
-    public function iFillInTheShippingInformationWith($info)
+    public function iFillInTheShippingInformationWith($info): void
     {
         $this->checkoutPage->fillShippingInformation($info);
     }
 
     /**
      * @Then the shipping information should be accepted
+     * @throws ExpectationException
      */
-    public function theShippingInformationShouldBeAccepted()
+    public function theShippingInformationShouldBeAccepted(): void
     {
         if (!$this->checkoutPage->isShippingInformationAccepted()) {
             throw new ExpectationException("Shipping information was not accepted.", $this->getSession());
@@ -156,15 +161,16 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I use the same address for billing
      */
-    public function iUseTheSameAddressForBilling()
+    public function iUseTheSameAddressForBilling(): void
     {
         $this->checkoutPage->useShippingAsBilling();
     }
 
     /**
      * @Then the billing address should be set to the same as the shipping address
+     * @throws ExpectationException
      */
-    public function theBillingAddressShouldBeSetToTheSameAsTheShippingAddress()
+    public function theBillingAddressShouldBeSetToTheSameAsTheShippingAddress(): void
     {
         if (!$this->checkoutPage->isBillingAddressSameAsShipping()) {
             throw new ExpectationException("Billing address is not the same as shipping address.", $this->getSession());
@@ -174,15 +180,16 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I select :method as the shipping method
      */
-    public function iSelectAsTheShippingMethod($method)
+    public function iSelectAsTheShippingMethod($method): void
     {
         $this->checkoutPage->selectShippingMethod($method);
     }
 
     /**
      * @Then the shipping method and its cost should be displayed
+     * @throws ExpectationException
      */
-    public function theShippingMethodAndItsCostShouldBeDisplayed()
+    public function theShippingMethodAndItsCostShouldBeDisplayed(): void
     {
         if (!$this->checkoutPage->isShippingMethodDisplayed()) {
             throw new ExpectationException("Shipping method is not displayed.", $this->getSession());
@@ -196,15 +203,16 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I enter valid card details with :cardInfo
      */
-    public function iEnterValidCardDetailsWith($cardInfo)
+    public function iEnterValidCardDetailsWith($cardInfo): void
     {
         $this->checkoutPage->enterCardDetails($cardInfo);
     }
 
     /**
      * @Then the card details should be accepted
+     * @throws ExpectationException
      */
-    public function theCardDetailsShouldBeAccepted()
+    public function theCardDetailsShouldBeAccepted(): void
     {
         if (!$this->checkoutPage->areCardDetailsAccepted()) {
             throw new ExpectationException("Card details were not accepted.", $this->getSession());
@@ -214,19 +222,20 @@ class FeatureContext extends RawMinkContext implements Context
     /**
      * @When I complete the purchase
      */
-    public function iCompleteThePurchase()
+    public function iCompleteThePurchase(): void
     {
         $this->checkoutPage->completePurchase();
     }
 
     /**
      * @Then the order confirmation page should be displayed
+     * @throws ExpectationException
      */
-    public function theOrderConfirmationPageShouldBeDisplayed()
+    public function theOrderConfirmationPageShouldBeDisplayed(): void
     {
         $currentPath = parse_url($this->getSession()->getCurrentUrl(), PHP_URL_PATH);
-        if (strpos($currentPath, '/order-confirmation') === false) {
-            throw new ExpectationException("Order confirmation page is not displayed. Current path: {$currentPath}", $this->getSession());
+        if (!str_contains($currentPath, '/order-confirmation')) {
+            throw new ExpectationException("Order confirmation page is not displayed. Current path: $currentPath", $this->getSession());
         }
     }
 }

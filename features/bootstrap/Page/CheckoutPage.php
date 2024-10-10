@@ -2,113 +2,195 @@
 
 namespace Page;
 
+use Behat\Mink\Exception\ElementNotFoundException;
+
 /**
  * CheckoutPage handles actions on the checkout page.
  */
 class CheckoutPage extends BasePage
 {
     /**
-     * Fills in the shipping information form.
+     * The URL of the checkout page.
      *
-     * @param string $info Shipping info in the format "Name, Address, City, Postcode, Country".
+     * @var string
      */
-    public function fillShippingInformation($info)
-    {
-        $parts = explode(', ', $info);
-        $this->fillField('shipping_name', $parts[0]);
-        $this->fillField('shipping_address', $parts[1]);
-        $this->fillField('shipping_city', $parts[2]);
-        $this->fillField('shipping_postcode', $parts[3]);
-        $this->selectOption('shipping_country', $parts[4]);
-    }
+    protected $url = 'https://aeonstest.info/checkout/';
 
     /**
-     * Uses the shipping address as the billing address.
-     */
-    public function useShippingAsBilling()
-    {
-        $this->clickButton('Use shipping address for billing');
-    }
-
-    /**
-     * Selects a shipping method.
+     * Initializes the CheckoutPage with a Mink session.
      *
-     * @param string $method The shipping method to select.
+     * @param \Behat\Mink\Session $session The Mink session.
      */
-    public function selectShippingMethod($method)
+    public function __construct($session)
     {
-        $this->selectOption('shipping_method', $method);
+        parent::__construct($session);
     }
 
     /**
-     * Enters the credit card details for payment.
+     * Retrieves the URL of the page.
      *
-     * @param string $cardInfo Card info in the format "CardNumber, ExpiryDate, CVC".
+     * @return string The page URL.
      */
-    public function enterCardDetails($cardInfo)
+    protected function getUrl(): string
     {
-        $parts = explode(', ', $cardInfo);
-        $this->fillField('card_number', $parts[0]);
-        $this->fillField('card_expiry', $parts[1]);
-        $this->fillField('card_cvc', $parts[2]);
+        return $this->url;
     }
 
     /**
-     * Completes the purchase process.
-     */
-    public function completePurchase()
-    {
-        $this->clickButton('Complete Purchase');
-    }
-
-    /**
-     * Checks if the shipping information was accepted.
+     * Checks if the current URL matches the checkout page URL.
      *
-     * @return bool True if accepted, false otherwise.
+     * @return bool True if URLs match, false otherwise.
      */
-    public function isShippingInformationAccepted()
+    public function isUrlMatches(): bool
     {
-        return !$this->session->getPage()->hasContent('Invalid shipping information');
+        return $this->getCurrentUrl() === $this->url;
     }
 
     /**
-     * Checks if the billing address matches the shipping address.
+     * Verifies that the current page is the checkout page by checking the presence of the checkout header.
      *
-     * @return bool True if they are the same, false otherwise.
+     * @return bool True if on the checkout page, false otherwise.
      */
-    public function isBillingAddressSameAsShipping()
+    public function isCheckoutPage(): bool
     {
-        $element = $this->session->getPage()->findField('billing_same_as_shipping');
-        return $element ? $element->isChecked() : false;
+        return $this->isElementVisible('h1.checkout-title');
     }
 
     /**
-     * Checks if the selected shipping method is displayed.
+     * Fills in the checkout form with the provided information.
      *
-     * @return bool True if displayed, false otherwise.
+     * @param string $email Customer's email address.
+     * @param string $firstName Customer's first name.
+     * @param string $lastName Customer's last name.
+     * @param string $phone Customer's phone number.
+     * @param string $address Customer's street address.
+     * @param string $city Customer's city.
+     * @param string $postcode Customer's postal code.
+     * @param string $country Customer's country (must match an option in the dropdown).
      */
-    public function isShippingMethodDisplayed()
-    {
-        return $this->getElement('.shipping-method')->isVisible();
+    public function fillInCheckoutForm(
+        string $email,
+        string $firstName,
+        string $lastName,
+        string $phone,
+        string $address,
+        string $city,
+        string $postcode,
+        string $country
+    ): void {
+        $this->enterText('#app_one_page_checkout_customer_email', $email);
+        $this->enterText('#app_one_page_checkout_billingAddress_firstName', $firstName);
+        $this->enterText('#app_one_page_checkout_billingAddress_lastName', $lastName);
+        $this->enterText('#app_one_page_checkout_billingAddress_phoneNumber', $phone);
+        $this->enterText('#app_one_page_checkout_billingAddress_street', $address);
+        $this->enterText('#app_one_page_checkout_billingAddress_city', $city);
+        $this->enterText('#app_one_page_checkout_billingAddress_postcode', $postcode);
+        $this->selectDropdownOption('#app_one_page_checkout_billingAddress_countryCode', $country);
     }
 
     /**
-     * Checks if the shipping cost is displayed.
+     * Checks if an element is visible on the page.
      *
-     * @return bool True if displayed, false otherwise.
+     * @param string $selector The CSS selector.
+     * @return bool True if the element is visible, false otherwise.
      */
-    public function isShippingCostDisplayed()
+    public function isElementVisible(string $selector): bool
     {
-        return $this->getElement('.shipping-cost')->isVisible();
+        try {
+            $element = $this->findElement($selector);
+            return $element->isVisible();
+        } catch (ElementNotFoundException $e) {
+            return false;
+        }
     }
 
     /**
-     * Checks if the card details were accepted.
-     *
-     * @return bool True if accepted, false otherwise.
+     * Opens the checkout page.
      */
-    public function areCardDetailsAccepted()
+    public function load(): void
     {
-        return !$this->session->getPage()->hasContent('Invalid card details');
+        $this->open();
+    }
+
+    /**
+     * Waits for the checkout page to load completely.
+     *
+     * @param int $timeout The maximum time to wait in milliseconds.
+     */
+    public function waitForPageToLoad(int $timeout = 10000): void
+    {
+        parent::waitForPageToLoad($timeout);
+        $this->waitForElementVisible('h1.checkout-title', $timeout);
+    }
+
+    /**
+     * Gets the current URL of the page.
+     *
+     * @return string The current URL.
+     */
+    public function getCurrentUrl(): string
+    {
+        return $this->session->getCurrentUrl();
+    }
+
+    /**
+     * Enters text into an input field identified by the provided selector.
+     *
+     * @param string $selector The CSS selector.
+     * @param string $text The text to enter.
+     */
+    public function enterText(string $selector, string $text): void
+    {
+        $element = $this->findElement($selector);
+        $this->scrollToElement($element);
+        $element->setValue($text);
+    }
+
+    /**
+     * Selects an option from a dropdown menu by visible text.
+     *
+     * @param string $selector The CSS selector of the select field.
+     * @param string $optionText The visible text of the option to select.
+     */
+    public function selectDropdownOption(string $selector, string $optionText): void
+    {
+        $element = $this->findElement($selector);
+        $this->scrollToElement($element);
+        $element->selectOption($optionText);
+    }
+
+    /**
+     * Finds and returns a web element using the provided selector.
+     *
+     * @param string $selector The CSS selector.
+     * @param int $timeout The maximum time to wait in milliseconds.
+     * @return \Behat\Mink\Element\NodeElement The found element.
+     * @throws ElementNotFoundException If the element is not found within the timeout.
+     */
+    protected function findElement(string $selector, int $timeout = 5000): \Behat\Mink\Element\NodeElement
+    {
+        return parent::findElement($selector, $timeout);
+    }
+
+    /**
+     * Scrolls the page to bring an element into view.
+     *
+     * @param \Behat\Mink\Element\NodeElement $element The element to scroll to.
+     */
+    protected function scrollToElement($element): void
+    {
+        parent::scrollToElement($element);
+    }
+
+    /**
+     * Waits for an element to be visible on the page.
+     *
+     * @param string $selector The CSS selector.
+     * @param int $timeout The maximum time to wait in milliseconds.
+     * @throws ElementNotFoundException If the element is not visible within the timeout.
+     */
+    protected function waitForElementVisible(string $selector, int $timeout = 5000): void
+    {
+        parent::waitForElementVisible($selector, $timeout);
     }
 }
