@@ -2,7 +2,9 @@
 
 namespace Page;
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
+use Behat\Mink\Session;
 
 /**
  * CheckoutPage handles actions on the checkout page.
@@ -14,14 +16,14 @@ class CheckoutPage extends BasePage
      *
      * @var string
      */
-    protected $url = 'https://aeonstest.info/checkout/';
+    protected string $url = 'https://aeonstest.info/checkout/';
 
     /**
      * Initializes the CheckoutPage with a Mink session.
      *
-     * @param \Behat\Mink\Session $session The Mink session.
+     * @param Session $session The Mink session.
      */
-    public function __construct($session)
+    public function __construct(Session $session)
     {
         parent::__construct($session);
     }
@@ -67,6 +69,7 @@ class CheckoutPage extends BasePage
      * @param string $city Customer's city.
      * @param string $postcode Customer's postal code.
      * @param string $country Customer's country (must match an option in the dropdown).
+     * @throws ElementNotFoundException
      */
     public function fillInCheckoutForm(
         string $email,
@@ -167,10 +170,10 @@ class CheckoutPage extends BasePage
      *
      * @param string $selector The CSS selector.
      * @param int $timeout The maximum time to wait in milliseconds.
-     * @return \Behat\Mink\Element\NodeElement The found element.
+     * @return NodeElement The found element.
      * @throws ElementNotFoundException If the element is not found within the timeout.
      */
-    protected function findElement(string $selector, int $timeout = 5000): \Behat\Mink\Element\NodeElement
+    protected function findElement(string $selector, int $timeout = 5000): NodeElement
     {
         return parent::findElement($selector, $timeout);
     }
@@ -178,9 +181,9 @@ class CheckoutPage extends BasePage
     /**
      * Scrolls the page to bring an element into view.
      *
-     * @param \Behat\Mink\Element\NodeElement $element The element to scroll to.
+     * @param NodeElement $element The element to scroll to.
      */
-    protected function scrollToElement($element): void
+    protected function scrollToElement(NodeElement $element): void
     {
         parent::scrollToElement($element);
     }
@@ -213,7 +216,7 @@ class CheckoutPage extends BasePage
         return $this->findElement($selector)->getText();
     }
 
-    public function isProcessingPageDisplayed()
+    public function isProcessingPageDisplayed(): bool
     {
         // Placeholder for element selector
         $selector = 'PROCESSING_ICON_SELECTOR';

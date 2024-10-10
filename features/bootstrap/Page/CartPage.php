@@ -16,7 +16,7 @@ class CartPage extends BasePage
      *
      * @var string
      */
-    protected $url = 'https://aeonstest.info/cart/';
+    protected string $url = 'https://aeonstest.info/cart/';
 
     /**
      * Retrieves the URL of the page.
@@ -185,6 +185,7 @@ class CartPage extends BasePage
      * Applies a coupon code to the cart.
      *
      * @param string $couponCode The coupon code.
+     * @throws ElementNotFoundException
      */
     public function applyCoupon(string $couponCode): void
     {

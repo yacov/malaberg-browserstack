@@ -6,7 +6,7 @@ default:
       contexts:
         - FeatureContext
         - BrowserStackContext
-        - Features\Bootstrap\SharedDataContext        - Features\Bootstrap\SharedDataContext
+        - Features\Bootstrap\SharedDataContext
         - Features\Bootstrap\MainPageContext:
             - '@Features\Bootstrap\SharedDataContext'
         - Features\Bootstrap\ProductPageContext:

@@ -2,6 +2,7 @@
 
 namespace Page;
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
 
 /**
@@ -14,7 +15,7 @@ class HomePage extends BasePage
      *
      * @var string
      */
-    protected $url = '/';
+    protected string $url = '/';
 
     /**
      * Navigates to the main page and waits for it to load.
@@ -60,10 +61,10 @@ class HomePage extends BasePage
     /**
      * Finds and returns the "Shop Now" button element.
      *
-     * @return \Behat\Mink\Element\NodeElement The "Shop Now" button element.
+     * @return NodeElement The "Shop Now" button element.
      * @throws ElementNotFoundException If the button is not found.
      */
-    protected function getShopNowButton(): \Behat\Mink\Element\NodeElement
+    protected function getShopNowButton(): NodeElement
     {
         $selector = 'a.btn[href="/range"]';
         return $this->findElement($selector);

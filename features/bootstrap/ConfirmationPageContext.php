@@ -7,8 +7,8 @@ use PHPUnit\Framework\Assert;
 
 class ConfirmationPageContext extends MinkContext
 {
-    private $confirmationPage;
-    private $sharedData;
+    private ConfirmationPage $confirmationPage;
+    private SharedDataContext $sharedData;
 
     public function __construct(SharedDataContext $sharedData)
     {

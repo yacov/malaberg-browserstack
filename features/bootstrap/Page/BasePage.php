@@ -19,7 +19,7 @@ abstract class BasePage
      *
      * @var Session
      */
-    protected $session;
+    protected Session $session;
 
     /**
      * Initializes the BasePage with a Mink session.

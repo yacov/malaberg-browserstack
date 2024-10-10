@@ -4,7 +4,7 @@ namespace Features\Bootstrap;
 
 class SharedDataContext
 {
-    private $data = [];
+    private array $data = [];
 
     public function set($key, $value): void
     {

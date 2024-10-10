@@ -4,6 +4,7 @@
 namespace Page;
 
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Session;
 use Behat\Mink\Exception\ElementNotFoundException;
 use InvalidArgumentException;
@@ -18,7 +19,7 @@ class ProductPage extends BasePage
      *
      * @var string
      */
-    protected $url = 'https://aeonstest.info/products/aeons-total-harmony';
+    protected string $url = 'https://aeonstest.info/products/aeons-total-harmony';
 
     /**
      * Initializes the ProductPage with a Mink session.
@@ -163,7 +164,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns the 'Add to Cart' button element.
      *
-     * @return \Behat\Mink\Element\NodeElement The 'Add to Cart' button element.
+     * @return NodeElement The 'Add to Cart' button element.
      * @throws ElementNotFoundException If the button is not found.
      */
     protected function getAddToCartButton()
@@ -175,7 +176,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns the 250ml size radio button element.
      *
-     * @return \Behat\Mink\Element\NodeElement The 250ml size radio button element.
+     * @return NodeElement The 250ml size radio button element.
      * @throws ElementNotFoundException If the radio button is not found.
      */
     protected function getSizeRadioButton250ml()
@@ -187,7 +188,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns the 3 bottles size radio button element.
      *
-     * @return \Behat\Mink\Element\NodeElement The 3 bottles size radio button element.
+     * @return NodeElement The 3 bottles size radio button element.
      * @throws ElementNotFoundException If the radio button is not found.
      */
     protected function getSizeRadioButton3Bottles()
@@ -199,7 +200,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns the subscribe button element.
      *
-     * @return \Behat\Mink\Element\NodeElement The subscribe button element.
+     * @return NodeElement The subscribe button element.
      * @throws ElementNotFoundException If the button is not found.
      */
     protected function getSubscribeButton()
@@ -211,7 +212,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns the FAQ title element.
      *
-     * @return \Behat\Mink\Element\NodeElement The FAQ title element.
+     * @return NodeElement The FAQ title element.
      * @throws ElementNotFoundException If the element is not found.
      */
     protected function getFaqTitleElement()
@@ -223,7 +224,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns an array of accordion button elements.
      *
-     * @return \Behat\Mink\Element\NodeElement[] The accordion button elements.
+     * @return NodeElement[] The accordion button elements.
      */
     protected function getAccordionButtons(): array
     {
@@ -234,7 +235,7 @@ class ProductPage extends BasePage
     /**
      * Finds and returns an array of expanded accordion sections.
      *
-     * @return \Behat\Mink\Element\NodeElement[] The expanded accordion sections.
+     * @return NodeElement[] The expanded accordion sections.
      */
     protected function getExpandedSections(): array
     {
@@ -257,9 +258,9 @@ class ProductPage extends BasePage
     /**
      * Scrolls to the specified element.
      *
-     * @param \Behat\Mink\Element\NodeElement $element The element to scroll to.
+     * @param NodeElement $element The element to scroll to.
      */
-    protected function scrollToElement($element): void
+    protected function scrollToElement(NodeElement $element): void
     {
         parent::scrollToElement($element);
     }
@@ -268,7 +269,7 @@ class ProductPage extends BasePage
      * Finds an element using a link text locator.
      *
      * @param string $linkText The text of the link to find.
-     * @return \Behat\Mink\Element\NodeElement The found link element.
+     * @return NodeElement The found link element.
      * @throws ElementNotFoundException If the link is not found.
      */
     protected function findElementLink(string $linkText)
