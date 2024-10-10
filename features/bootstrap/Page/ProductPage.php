@@ -246,6 +246,7 @@ class ProductPage extends BasePage
      * Waits for the page to load completely.
      *
      * @param int $timeout The maximum time to wait in milliseconds.
+     * @throws ElementNotFoundException
      */
     public function waitForPageToLoad(int $timeout = 10000): void
     {

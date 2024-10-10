@@ -19,11 +19,17 @@ class MainPageContext extends MinkContext implements Context
     private HomePage $homePage;
 
     /**
+     * @var SharedDataContext
+     */
+    private SharedDataContext $sharedData;
+
+    /**
      * Initializes context.
      */
-    public function __construct()
+    public function __construct(SharedDataContext $sharedData)
     {
         $this->homePage = new HomePage($this->getSession());
+        $this->sharedData = $sharedData;
     }
 
     /**

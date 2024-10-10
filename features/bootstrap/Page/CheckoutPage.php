@@ -116,6 +116,7 @@ class CheckoutPage extends BasePage
      * Waits for the checkout page to load completely.
      *
      * @param int $timeout The maximum time to wait in milliseconds.
+     * @throws ElementNotFoundException
      */
     public function waitForPageToLoad(int $timeout = 10000): void
     {
@@ -138,6 +139,7 @@ class CheckoutPage extends BasePage
      *
      * @param string $selector The CSS selector.
      * @param string $text The text to enter.
+     * @throws ElementNotFoundException
      */
     public function enterText(string $selector, string $text): void
     {
@@ -151,6 +153,7 @@ class CheckoutPage extends BasePage
      *
      * @param string $selector The CSS selector of the select field.
      * @param string $optionText The visible text of the option to select.
+     * @throws ElementNotFoundException
      */
     public function selectDropdownOption(string $selector, string $optionText): void
     {

@@ -18,6 +18,8 @@
     
     -   **Languages/Tools**: Python/Behat, Mink, BrowserStack, Sylius for backend commands.
     -   **Future Additions**: Visual testing with Percy and AI-based steps via the OpenAI API.
+    -   **Project Architecture Enhancements**:
+        -   **Shared Contexts for Data Sharing**: Implementation of a `SharedDataContext` to enable data sharing across different context classes, promoting better modularity and maintainability.
 
 ___
 
@@ -78,6 +80,11 @@ ___
 
 -   **Visual Regression Testing**: Using **Percy** to catch UI inconsistencies across platforms and devices.
 -   **AI-Based Visual Validation**: Leveraging **OpenAI's API** for intelligent layout and visual validation in complex scenarios.
+
+#### **6.2 Updated Features**
+
+-   **Data Sharing Across Contexts**:
+    -   Implemented a **SharedDataContext** to facilitate data sharing between different Behat context classes. This ensures that data (like memorized product details, shipping information, order numbers) can be accessed and verified across multiple steps and contexts during the test execution.
 
 ___
 
@@ -165,6 +172,9 @@ ___
 -   **HomePage.php**:  
     Manages actions on the homepage, such as navigating to the shop by clicking the "Shop Now" button and verifying that the homepage loads correctly.
     
+    -   **New Methods Added**:
+        -   `getPageTitle()`: Retrieves the title of the homepage.
+
 -   **ProductPage.php**:  
     Handles interactions on the product detail page, including:
     
@@ -172,6 +182,13 @@ ___
     -   Setting product quantities.
     -   Adding products to the cart.
     -   Interacting with UI components like the FAQ accordion to verify its functionality.
+
+    -   **New Methods Added**:
+        -   `navigateToProduct($productName)`: Navigates to a specific product page.
+        -   `getProductName()`: Retrieves the product name.
+        -   `getSelectedPurchaseOption()`: Retrieves the selected purchase option.
+        -   `getQuantity()`: Retrieves the current quantity selected.
+
 -   **CartPage.php**:  
     Manages the shopping cart functionality, including:
     
@@ -192,6 +209,7 @@ ___
 -   **FeatureContext.php**:  
     Implements global step definitions and serves as the primary context for Behat tests. It coordinates interactions between different page objects and defines high-level test steps that are common across multiple scenarios.
     
+    -   **Note**: We have minimized the use of `FeatureContext.php` for specific page interactions, favoring the use of dedicated context classes for each page to promote modularity.
 
 #### **Behat Context Classes**
 
@@ -215,6 +233,19 @@ ___
     -   Selecting product options and variants.
     -   Interacting with UI elements.
     -   Adding products to the cart from the product page.
+
+-   **ConfirmationPageContext.php**:
+    -   **New Context Class Added**:
+        -   Manages the order confirmation page steps, including:
+            -   Waiting for the confirmation page to load.
+            -   Memorizing the order number.
+            -   Verifying the order details are correct.
+
+-   **SharedDataContext.php**:
+    -   **New Context Class Added**:
+        -   Provides a mechanism to share data between different context classes.
+        -   Stores shared data such as memorized product details, shipping information, and order numbers.
+        -   Ensures that data is accessible across different steps and contexts during the test execution.
 
 #### **Feature Files**
 
@@ -245,6 +276,9 @@ To ensure comprehensive test coverage, the following matrix maps PRD features to
 | Verifying Order Totals and Discounts | Steps: "Then the order total should be calculated correctly" | CartPageContext.php |
 | Cross-Browser and Cross-Device Testing | Configurations in behat.yml for BrowserStack integration |  |
 | Backend Workflows via Sylius Commands | To be implemented | Planned in future enhancements |
+| Data Sharing Across Contexts | Implemented via `SharedDataContext` | Shared across contexts |
+| Order Confirmation Verification | Scenario: Successful One-Time Purchase with Normal Card | `purchase.feature` |
+|                                 | Steps in `ConfirmationPageContext.php` |                    |
 
 ___
 
@@ -292,3 +326,71 @@ ___
     
     -   **Load and Stress Testing**:  
         Incorporate performance testing to evaluate how the application behaves under high load. Use tools like JMeter or Locust to simulate multiple users and identify potential bottlenecks
+
+___
+
+### **18\. Project Architecture Overview**
+
+-   **Modular Context Classes**:
+    -   Each page or feature is represented by its own context class (e.g., `ProductPageContext`, `CartPageContext`), improving modularity and separation of concerns.
+
+-   **Shared Data Management**:
+    -   Introduced `SharedDataContext` to handle data sharing across contexts.
+    -   This allows for memorized data (e.g., product details, shipping info, order numbers) to be accessible throughout the test scenarios.
+
+-   **Page Object Model (POM)**:
+    -   The codebase follows the Page Object Model pattern, where each page is represented by a class encapsulating its elements and interactions.
+
+-   **Reusability and Maintainability**:
+    -   By separating concerns into specific context and page classes, the codebase is more maintainable and scalable.
+
+___
+
+### **19\. Instructions for AI Coder Agents**
+
+To maintain consistency and adhere to the project's architecture and coding standards, AI coder agents should follow these guidelines when adding new features or pages:
+
+#### Adding a New Page
+
+1.   **Create a New Page Class**:
+    -   In the `src/Page/` directory, create a new class representing the page (e.g., `NewPage.php`).
+    -   Extend `BasePage` and implement methods corresponding to the page's functionalities.
+
+2.   **Create a Context Class for the Page**:
+    -   In the `features/bootstrap/` directory, create a new context class (e.g., `NewPageContext.php`).
+    -   The class should implement `Context` and contain step definitions specific to the new page.
+    -   Inject `SharedDataContext` if data sharing is needed.
+
+3.   **Update Feature Files**:
+    -   Add new scenarios or steps to existing feature files, or create a new feature file under `features/`.
+    -   Ensure that the steps correspond to the step definitions in your context class.
+
+4.   **Define Element Selectors**:
+    -   In your page class, define the selectors for the page elements.
+    -   Use descriptive and maintainable selector strategies (e.g., CSS selectors, XPath).
+
+5.   **Use SharedDataContext for Data Sharing**:
+    -   If you need to share data across contexts (e.g., memorizing information), use the `SharedDataContext`.
+    -   Set and get data using methods provided by `SharedDataContext`.
+
+6.   **Follow Coding Standards**:
+    -   Adhere to PSR-12 coding standards for PHP.
+    -   Write clear and informative comments.
+    -   Use meaningful method and variable names.
+
+#### General Coding Guidelines
+
+-   **Modularity**: Keep context classes focused on specific pages or features.
+-   **Reusability**: Implement reusable methods in page classes.
+-   **Error Handling**: Include appropriate exception handling and provide clear error messages.
+-   **Documentation**: Include docblocks for classes and methods.
+
+___
+
+### **20\. Additional Instructions**
+
+-   **Element Selectors Management**: Maintain a consistent approach for element selectors.
+-   **Test Data Management**: Use data tables in Gherkin steps for input data when appropriate.
+-   **Logging and Reporting**: Implement logging within tests for better debugging.
+-   **Continuous Integration (CI) Considerations**: Ensure tests can be integrated into CI pipelines.
+-   **Performance Optimization**: Avoid unnecessary waits or sleeps; use proper synchronization methods.

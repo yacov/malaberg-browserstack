@@ -41,6 +41,7 @@ class CartPage extends BasePage
      * Waits for the cart page to load.
      *
      * @param int $timeout The maximum time to wait in milliseconds.
+     * @throws ElementNotFoundException
      */
     public function waitForPageToLoad(int $timeout = 10000): void
     {
@@ -62,6 +63,7 @@ class CartPage extends BasePage
      * Gets the title text of the cart page.
      *
      * @return string The cart title.
+     * @throws ElementNotFoundException
      */
     public function getCartTitle(): string
     {
@@ -104,6 +106,7 @@ class CartPage extends BasePage
      * Updates the quantity of the product in the cart.
      *
      * @param int $quantity The desired quantity.
+     * @throws ElementNotFoundException
      */
     public function updateQuantity(int $quantity): void
     {
@@ -117,6 +120,7 @@ class CartPage extends BasePage
      * Gets the current quantity value from the quantity input.
      *
      * @return int The quantity.
+     * @throws ElementNotFoundException
      */
     public function getQuantity(): int
     {
@@ -129,6 +133,7 @@ class CartPage extends BasePage
      * Gets the unit price of the product.
      *
      * @return float The unit price.
+     * @throws ElementNotFoundException
      */
     public function getUnitPrice(): float
     {
@@ -142,6 +147,7 @@ class CartPage extends BasePage
      * Gets the total price from the cart.
      *
      * @return float The total price.
+     * @throws ElementNotFoundException
      */
     public function getTotalPrice(): float
     {
@@ -285,6 +291,7 @@ class CartPage extends BasePage
      * Gets the purchase type text from the cart page.
      *
      * @return string The purchase type.
+     * @throws ElementNotFoundException
      */
     public function getPurchaseType(): string
     {

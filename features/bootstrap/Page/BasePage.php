@@ -2,6 +2,8 @@
 
 namespace Page;
 
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Mink\Session;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -96,6 +98,7 @@ abstract class BasePage
      * Clicks on a web element identified by the provided selector.
      *
      * @param string $selector The CSS selector.
+     * @throws ElementNotFoundException
      */
     public function clickElement(string $selector): void
     {
@@ -109,6 +112,7 @@ abstract class BasePage
      *
      * @param string $selector The CSS selector.
      * @param string $text The text to enter.
+     * @throws ElementNotFoundException
      */
     public function enterText(string $selector, string $text): void
     {
@@ -122,6 +126,7 @@ abstract class BasePage
      *
      * @param string $selector The CSS selector.
      * @return string The text content of the element.
+     * @throws ElementNotFoundException
      */
     public function getElementText(string $selector): string
     {
@@ -163,6 +168,7 @@ abstract class BasePage
      *
      * @param string $selector The CSS selector of the select field.
      * @param string $optionText The visible text of the option to select.
+     * @throws ElementNotFoundException
      */
     public function selectDropdownOption(string $selector, string $optionText): void
     {
@@ -210,6 +216,9 @@ abstract class BasePage
      * Switches focus to an iframe on the page.
      *
      * @param string $selector The CSS selector of the iframe.
+     * @throws DriverException
+     * @throws ElementNotFoundException
+     * @throws UnsupportedDriverActionException
      */
     public function switchToFrame(string $selector): void
     {
@@ -232,6 +241,7 @@ abstract class BasePage
      * @param string $selector The CSS selector.
      * @param string $attributeName The name of the attribute.
      * @return string|null The value of the attribute or null if not found.
+     * @throws ElementNotFoundException
      */
     public function getElementAttribute(string $selector, string $attributeName): ?string
     {

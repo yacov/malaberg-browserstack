@@ -6,11 +6,17 @@ default:
       contexts:
         - FeatureContext
         - BrowserStackContext
-        - Features\Bootstrap\FeatureContext
-        - Features\Bootstrap\MainPageContext
-        - Features\Bootstrap\ProductPageContext
-        - Features\Bootstrap\CartPageContext
-        - Features\Bootstrap\CheckoutPageContext
+        - Features\Bootstrap\SharedDataContext        - Features\Bootstrap\SharedDataContext
+        - Features\Bootstrap\MainPageContext:
+            - '@Features\Bootstrap\SharedDataContext'
+        - Features\Bootstrap\ProductPageContext:
+            - '@Features\Bootstrap\SharedDataContext'
+        - Features\Bootstrap\CartPageContext:
+            - '@Features\Bootstrap\SharedDataContext'
+        - Features\Bootstrap\CheckoutPageContext:
+            - '@Features\Bootstrap\SharedDataContext'
+        - Features\Bootstrap\ConfirmationPageContext:
+            - '@Features\Bootstrap\SharedDataContext'
   extensions:
     Behat\MinkExtension:
       base_url: 'https://aeonstest.info'
