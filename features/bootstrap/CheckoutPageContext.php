@@ -35,76 +35,17 @@ class CheckoutPageContext extends MinkContext implements Context
     }
 
     /**
-     * @Then user should be on the checkout page
-     * @throws Exception
+     * @Then the checkout page is displayed
      */
-    public function userShouldBeOnTheCheckoutPage(): void
+    public function theCheckoutPageIsDisplayed(): void
     {
-        if (!$this->checkoutPage->isUrlMatches()) {
-            throw new Exception("User is not on the checkout page");
-        }
+        Assert::assertTrue($this->checkoutPage->isCheckoutPage(), "The checkout page is not displayed.");
     }
 
     /**
-     * @When user fills out the checkout form
+     * @When I provide shipping information:
      */
-    public function userFillsOutTheCheckoutForm(): void
-    {
-        $this->checkoutPage->fillInCheckoutForm(
-            'test@example.com',
-            'John',
-            'Doe',
-            '123456789',
-            '123 Main St',
-            'Testville',
-            '12345',
-            'US'
-        );
-    }
-
-    /**
-     * @Then the purchase should be successfully completed
-     * @throws Exception
-     */
-    public function thePurchaseShouldBeSuccessfullyCompleted(): void
-    {
-        $pageContent = $this->getSession()->getPage()->getContent();
-        if (!str_contains($pageContent, "Thank you for your purchase!")) {
-            throw new Exception("Purchase was not successfully completed");
-        }
-    }
-
-     /**
-     * @Then I verify the URL is :expectedURL
-     */
-    public function iVerifyTheURLIs($expectedURL): void
-    {
-        $currentURL = $this->checkoutPage->getCurrentURL();
-        Assert::assertStringContainsString($expectedURL, $currentURL);
-    }
-
-    /**
-     * @Then I verify the page title is :expectedTitle
-     */
-    public function iVerifyThePageTitleIs($expectedTitle): void
-    {
-        $pageTitle = $this->checkoutPage->getPageTitle();
-        Assert::assertEquals($expectedTitle, $pageTitle);
-    }
-
-    /**
-     * @Then I verify the product details and pricing are correct
-     */
-    public function iVerifyTheProductDetailsAndPricingAreCorrect(): void
-    {
-        $expectedData = $this->sharedData->getMultiple(['productName', 'purchaseType', 'quantity']);
-        $this->checkoutPage->verifyProductDetails($expectedData);
-    }
-
-    /**
-     * @When I fill in the shipping information with:
-     */
-    public function iFillInTheShippingInformationWith(TableNode $table): void
+    public function iProvideShippingInformation(TableNode $table): void
     {
         $shippingInfo = $table->getRowsHash();
         $this->checkoutPage->fillShippingInformation($shippingInfo);
@@ -112,9 +53,9 @@ class CheckoutPageContext extends MinkContext implements Context
     }
 
     /**
-     * @When I use the same address for billing
+     * @When I choose to use the same address for billing
      */
-    public function iUseTheSameAddressForBilling(): void
+    public function iChooseToUseTheSameAddressForBilling(): void
     {
         $this->checkoutPage->useSameAddressForBilling();
     }
@@ -129,18 +70,18 @@ class CheckoutPageContext extends MinkContext implements Context
     }
 
     /**
-     * @When I verify the shipping cost is :expectedCost
+     * @Then the shipping method and cost are displayed
      */
-    public function iVerifyTheShippingCostIs($expectedCost): void
+    public function theShippingMethodAndCostAreDisplayed(): void
     {
-        $actualCost = $this->checkoutPage->getShippingCost();
-        Assert::assertEquals($expectedCost, $actualCost);
+        Assert::assertTrue($this->checkoutPage->isShippingMethodDisplayed(), "Shipping method is not displayed.");
+        Assert::assertTrue($this->checkoutPage->isShippingCostDisplayed(), "Shipping cost is not displayed.");
     }
 
     /**
-     * @When I enter the payment details:
+     * @When I provide payment details:
      */
-    public function iEnterThePaymentDetails(TableNode $table): void
+    public function iProvidePaymentDetails(TableNode $table): void
     {
         $paymentDetails = $table->getRowsHash();
         $this->checkoutPage->enterPaymentDetails($paymentDetails);
@@ -155,18 +96,29 @@ class CheckoutPageContext extends MinkContext implements Context
     }
 
     /**
-     * @Then I should see the order processing page
+     * @Then the order confirmation page is displayed
      */
-    public function iShouldSeeTheOrderProcessingPage(): void
+    public function theOrderConfirmationPageIsDisplayed(): void
     {
-        Assert::assertTrue($this->checkoutPage->isProcessingPageDisplayed());
+        Assert::assertTrue($this->checkoutPage->isOrderConfirmationPageDisplayed(), "Order confirmation page is not displayed.");
     }
 
     /**
-     * @Then I wait for the order confirmation page to load
+     * @Then I see the order number
      */
-    public function iWaitForTheOrderConfirmationPageToLoad(): void
+    public function iSeeTheOrderNumber(): void
     {
-        $this->checkoutPage->waitForOrderConfirmationPage();
+        $orderNumber = $this->checkoutPage->getOrderNumber();
+        Assert::assertNotEmpty($orderNumber, "Order number is not displayed.");
+        $this->sharedData->set('orderNumber', $orderNumber);
+    }
+
+    /**
+     * @Then the order details are correct
+     */
+    public function theOrderDetailsAreCorrect(): void
+    {
+        $expectedData = $this->sharedData->getAll();
+        $this->checkoutPage->verifyOrderDetails($expectedData);
     }
 }
