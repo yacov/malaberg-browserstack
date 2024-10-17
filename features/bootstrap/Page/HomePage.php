@@ -1,6 +1,6 @@
 <?php
 
-namespace Page;
+namespace Features\Bootstrap\Page;
 
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -19,6 +19,7 @@ class HomePage extends BasePage
 
     /**
      * Navigates to the main page and waits for it to load.
+     * @throws ElementNotFoundException
      */
     public function open(): void
     {
@@ -27,6 +28,7 @@ class HomePage extends BasePage
 
     /**
      * Opens the home page using its URL and waits for the page to load.
+     * @throws ElementNotFoundException
      */
     protected function openPage(): void
     {
@@ -75,6 +77,9 @@ class HomePage extends BasePage
         return $this->session->getPage()->find('css', 'TITLE_SELECTOR')->getText();
     }
 
+    /**
+     * @throws ElementNotFoundException
+     */
     public function selectProduct($productName): void
     {
         // Placeholder for element selector

@@ -1,6 +1,6 @@
 <?php
 
-namespace Page;
+namespace Features\Bootstrap\Page;
 
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
@@ -11,6 +11,8 @@ use Behat\Mink\Session;
  */
 class CheckoutPage extends BasePage
 {
+
+
     /**
      * The URL of the checkout page.
      *
@@ -94,7 +96,7 @@ class CheckoutPage extends BasePage
     /**
      * Checks if an element is visible on the page.
      *
-     * @param string $selector The CSS selector.
+     * @param string $selector The selector (CSS or XPath).
      * @return bool True if the element is visible, false otherwise.
      */
     public function isElementVisible(string $selector): bool
@@ -107,17 +109,10 @@ class CheckoutPage extends BasePage
         }
     }
 
-    /**
-     * Opens the checkout page.
-     */
-    public function load(): void
-    {
-        $this->open();
-    }
 
     /**
      * Waits for the checkout page to load completely.
-     *
+     * @param string $selector The selector (CSS or XPath).
      * @param int $timeout The maximum time to wait in milliseconds.
      * @throws ElementNotFoundException
      */
@@ -148,7 +143,7 @@ class CheckoutPage extends BasePage
     {
         $element = $this->findElement($selector);
         $this->scrollToElement($element);
-        $element->setValue($text);
+        $element->type($text);
     }
 
     /**
@@ -165,45 +160,10 @@ class CheckoutPage extends BasePage
         $element->selectOption($optionText);
     }
 
-    /**
-     * Finds and returns a web element using the provided selector.
-     *
-     * @param string $selector The CSS selector.
-     * @param int $timeout The maximum time to wait in milliseconds.
-     * @return NodeElement The found element.
-     * @throws ElementNotFoundException If the element is not found within the timeout.
-     */
-    protected function findElement(string $selector, int $timeout = 5000): NodeElement
-    {
-        return parent::findElement($selector, $timeout);
-    }
-
-    /**
-     * Scrolls the page to bring an element into view.
-     *
-     * @param NodeElement $element The element to scroll to.
-     */
-    protected function scrollToElement(NodeElement $element): void
-    {
-        parent::scrollToElement($element);
-    }
-
-    /**
-     * Waits for an element to be visible on the page.
-     *
-     * @param string $selector The CSS selector.
-     * @param int $timeout The maximum time to wait in milliseconds.
-     * @throws ElementNotFoundException If the element is not visible within the timeout.
-     */
-    protected function waitForElementVisible(string $selector, int $timeout = 5000): void
-    {
-        parent::waitForElementVisible($selector, $timeout);
-    }
-
 
     public function getPageTitle(): string
     {
-        return $this->session->getPage()->find('css', 'PAGE_TITLE_SELECTOR')->getText();
+        return $this->session->getPage()->find('css', '#app_one_page_checkout h2')->getText();
     }
 
     /**
@@ -212,7 +172,7 @@ class CheckoutPage extends BasePage
     public function getShippingCost(): string
     {
         // Placeholder for element selector
-        $selector = 'SHIPPING_COST_SELECTOR';
+        $selector = '.order-summary-component .ch-shipping-value span';
         return $this->findElement($selector)->getText();
     }
 
@@ -221,5 +181,35 @@ class CheckoutPage extends BasePage
         // Placeholder for element selector
         $selector = 'PROCESSING_ICON_SELECTOR';
         return $this->isElementVisible($selector);
+    }
+
+    /**
+     * @throws ElementNotFoundException
+     */
+    public function completePurchase(): void
+    {
+        // Placeholder for element selector
+        $selector = '.checkout-main button[type=\'submit\']';
+        $this->findElement($selector)->click();
+    }
+
+    public function isShippingMethodDisplayed(): bool
+    {
+        return $this->isElementVisible('.shipping-method-selector');
+    }
+
+    public function isShippingCostDisplayed(): bool
+    {
+        return $this->isElementVisible('.shipping-cost-display');
+    }
+
+    public function isOrderConfirmationPageDisplayed(): bool
+    {
+        return $this->isElementVisible('.order-confirmation-header');
+    }
+
+    public function getOrderNumber(): string
+    {
+        return $this->findElement('.order-number')->getText();
     }
 }

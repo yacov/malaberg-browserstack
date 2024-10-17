@@ -9,7 +9,7 @@
     
     -   **Backend Testing**: Validate critical workflows such as adding products to the cart, checkout flow, and order processing by executing predefined **Sylius commands**.
     -   **UI Testing**: Ensure UI functions correctly across various devices (both mobile and desktop) through **BrowserStack**.
-    -   **Future Integration**: Incorporate **visual regression testing** using **Percy**, along with potential AI-based visual comparison using the **OpenAI API** for intelligent automation.
+    
 -   **Target Audience**:
     
     -   **End Customers** using the webstore for shopping.
@@ -17,9 +17,6 @@
 -   **Tech Stack**:
     
     -   **Languages/Tools**: Python/Behat, Mink, BrowserStack, Sylius for backend commands.
-    -   **Future Additions**: Visual testing with Percy and AI-based steps via the OpenAI API.
-    -   **Project Architecture Enhancements**:
-        -   **Shared Contexts for Data Sharing**: Implementation of a `SharedDataContext` to enable data sharing across different context classes, promoting better modularity and maintainability.
 
 ___
 
@@ -104,7 +101,8 @@ ___
 -   **Constraints**:
     
     -   Testing across multiple platforms (mobile and desktop) may require optimization for execution time and stability.
-    -   Some mobile-specific gestures (e.g., swipe, pinch) may need separate handling using **Appium**.
+    -   Some mobile-specific gestures (e.g., swipe, pinch) may need separate handling.
+
 -   **Assumptions**:
     
     -   BrowserStack offers accurate device/browser emulation, providing reliable cross-browser/device testing.
@@ -119,7 +117,7 @@ ___
     -   **BrowserStack** for cross-browser and mobile testing.
     -   **Sylius** for backend command execution, triggered through the testing framework.
 -   **Internal Dependencies**:
-    
+    -   **Friends of Behat** extentions: MinkExtension, MinkContext, SymfonyExtension. Page Object Model.
     -   **PHP-based Sylius commands** are triggered using Python subprocess or an alternative method within the testing suite for backend validation.
 
 ___
@@ -172,8 +170,6 @@ ___
 -   **HomePage.php**:  
     Manages actions on the homepage, such as navigating to the shop by clicking the "Shop Now" button and verifying that the homepage loads correctly.
     
-    -   **New Methods Added**:
-        -   `getPageTitle()`: Retrieves the title of the homepage.
 
 -   **ProductPage.php**:  
     Handles interactions on the product detail page, including:
@@ -182,12 +178,6 @@ ___
     -   Setting product quantities.
     -   Adding products to the cart.
     -   Interacting with UI components like the FAQ accordion to verify its functionality.
-
-    -   **New Methods Added**:
-        -   `navigateToProduct($productName)`: Navigates to a specific product page.
-        -   `getProductName()`: Retrieves the product name.
-        -   `getSelectedPurchaseOption()`: Retrieves the selected purchase option.
-        -   `getQuantity()`: Retrieves the current quantity selected.
 
 -   **CartPage.php**:  
     Manages the shopping cart functionality, including:
@@ -209,7 +199,7 @@ ___
 -   **FeatureContext.php**:  
     Implements global step definitions and serves as the primary context for Behat tests. It coordinates interactions between different page objects and defines high-level test steps that are common across multiple scenarios.
     
-    -   **Note**: We have minimized the use of `FeatureContext.php` for specific page interactions, favoring the use of dedicated context classes for each page to promote modularity.
+
 
 #### **Behat Context Classes**
 
@@ -242,18 +232,14 @@ ___
             -   Verifying the order details are correct.
 
 -   **SharedDataContext.php**:
-    -   **New Context Class Added**:
-        -   Provides a mechanism to share data between different context classes.
-        -   Stores shared data such as memorized product details, shipping information, and order numbers.
-        -   Ensures that data is accessible across different steps and contexts during the test execution.
+    -   Provides a mechanism to share data between different context classes.
+    -   Stores shared data such as memorized product details, shipping information, and order numbers.
+    -   Ensures that data is accessible across different steps and contexts during the test execution.
 
 #### **Feature Files**
 
 -   **features/purchase.feature**:  
     Contains Gherkin scenarios that outline key user flows, including:
-    -   **Successful Purchase Flow**: Tests the complete flow from product selection to order completion.
-    -   **Add Product to Cart with Subscription**: Verifies that subscription options function correctly when adding products to the cart.
-    -   **Verify Cart Functionality with Coupon**: Tests applying coupon codes and verifies that discounts are applied correctly.
     -   **Verify FAQ Accordion Functionality**: Checks that the FAQ accordion on the product page expands and collapses as expected.
 
 ___
@@ -298,55 +284,42 @@ To align the codebase with the PRD's objective of integrating Sylius backend com
     After executing backend commands, use frontend tests to verify that the changes are reflected in the UI. This ensures data consistency between the backend and frontend systems.
     
 
-___
-
-### **17\. Future Test Development**
-
--   **Visual Regression Testing**:
-    
-    -   **Integrate Percy**:  
-        Plan the integration of Percy for visual regression testing to detect UI inconsistencies across different browsers and devices. Update test scripts to capture screenshots at key points and compare them against baseline images.
--   **AI-Based Visual Validation**:
-    
-    -   **Leverage OpenAI API**:  
-        Explore using the OpenAI API for intelligent UI comparisons. Implement AI-based validation steps that can understand and compare complex UI layouts beyond pixel-by-pixel comparison.
--   **Expand Test Scenarios**:
-    
-    -   **Edge Case Testing**:  
-        Develop tests for edge cases such as invalid inputs, network failures, and error handling scenarios. Include tests for security vulnerabilities like SQL injection, cross-site scripting (XSS), and other common attack vectors.
-        
-    -   **Administrative Workflows**:  
-        Write tests for admin user functionalities, such as product management, order processing, and user management. Ensure that internal operations align with both backend processes and frontend representations.
-        
--   **API Testing**:
-    
-    -   **Sylius API Endpoints**:  
-        Plan to include automated tests for Sylius API endpoints using tools like Postman or REST-assured. Validate the correctness of API responses, status codes, and data integrity.
--   **Performance Testing**:
-    
-    -   **Load and Stress Testing**:  
-        Incorporate performance testing to evaluate how the application behaves under high load. Use tools like JMeter or Locust to simulate multiple users and identify potential bottlenecks
-
-___
-
-### **18\. Project Architecture Overview**
+### **17\. Project Architecture Overview**
 
 -   **Modular Context Classes**:
-    -   Each page or feature is represented by its own context class (e.g., `ProductPageContext`, `CartPageContext`), improving modularity and separation of concerns.
+    -   Each web page is represented by its own context class (e.g., `ProductPageContext`, `CartPageContext`), improving modularity and separation of concerns.
 
 -   **Shared Data Management**:
-    -   Introduced `SharedDataContext` to handle data sharing across contexts.
+    -    `SharedDataContext` to handle data sharing across contexts.
     -   This allows for memorized data (e.g., product details, shipping info, order numbers) to be accessible throughout the test scenarios.
+    -   The `SharedDataContext` is injected into each context class constructor, ensuring consistent access to shared data.
+    -   Methods like `set()`, `get()`, `setMultiple()`, and `getAll()` are used to manipulate shared data.
 
 -   **Page Object Model (POM)**:
     -   The codebase follows the Page Object Model pattern, where each page is represented by a class encapsulating its elements and interactions.
+
+-   **PHP Behat contexts sharing mechanism**:
+    -   Each page has its own context class, and the `FeatureContext` is used to share step definitions between contexts. Feature context inherit other Mink Extention contexts. Other page contexts inject FeatureContext into their constructors, using PHP code like this:    
+    ```
+    $this->featureContext = $environment->getContext('Features\Bootstrap\FeatureContext'); 
+    ```
+- **PHP Behat page object initialization**:
+    -   Page classes are initialized 
+- **PHP Behat behat.yml configuration**:
+    -   The `behat.yml` file is configured to: 
+      - 
+ - **Use of Friends of Behat Mink extension**:
+    - Detailed use of Page object extention:
+    - Detailed use of MinkExtension:
+    -- use of Browserstack webdriver in "Freinds of Behat" MinkExtension: 
+    - Detailed use of SymfonyExtension:
 
 -   **Reusability and Maintainability**:
     -   By separating concerns into specific context and page classes, the codebase is more maintainable and scalable.
 
 ___
 
-### **19\. Instructions for AI Coder Agents**
+### **18\. Instructions for AI Coder Agents**
 
 To maintain consistency and adhere to the project's architecture and coding standards, AI coder agents should follow these guidelines when adding new features or pages:
 
@@ -354,43 +327,46 @@ To maintain consistency and adhere to the project's architecture and coding stan
 
 1.   **Create a New Page Class**:
     -   In the `src/Page/` directory, create a new class representing the page (e.g., `NewPage.php`).
-    -   Extend `BasePage` and implement methods corresponding to the page's functionalities.
+    -   Extend `BasePage` and implement methods corresponding to the page's functionalities, reuse existing methods from `BasePage` when possible.
+    -   Add docblocks to the class and methods.
+    -   Use meaningful method and variable names.
+    -   If shared data is needed, ensure the page class's methods return the data to be stored in the `SharedDataContext` in the Context class (see Context Classes section).
 
 2.   **Create a Context Class for the Page**:
-    -   In the `features/bootstrap/` directory, create a new context class (e.g., `NewPageContext.php`).
+    -   In the `Features/Bootstrap/` directory, create a new context class (e.g., `NewPageContext.php`).
     -   The class should implement `Context` and contain step definitions specific to the new page.
     -   Inject `SharedDataContext` if data sharing is needed.
 
 3.   **Update Feature Files**:
-    -   Add new scenarios or steps to existing feature files, or create a new feature file under `features/`.
+    -   Add new scenarios or steps to existing feature files, or create a new feature file under `Features/`.
     -   Ensure that the steps correspond to the step definitions in your context class.
 
-4.   **Define Element Selectors**:
-    -   In your page class, define the selectors for the page elements.
-    -   Use descriptive and maintainable selector strategies (e.g., CSS selectors, XPath).
-
-5.   **Use SharedDataContext for Data Sharing**:
+4.   **Use SharedDataContext for Data Sharing**:
     -   If you need to share data across contexts (e.g., memorizing information), use the `SharedDataContext`.
     -   Set and get data using methods provided by `SharedDataContext`.
 
-6.   **Follow Coding Standards**:
+5.   **Follow Coding Standards**:
     -   Adhere to PSR-12 coding standards for PHP.
     -   Write clear and informative comments.
     -   Use meaningful method and variable names.
+    -   Add extensive docblocks, with explanations for all parameters, examples, and return values.
 
 #### General Coding Guidelines
 
 -   **Modularity**: Keep context classes focused on specific pages or features.
 -   **Reusability**: Implement reusable methods in page classes.
 -   **Error Handling**: Include appropriate exception handling and provide clear error messages.
--   **Documentation**: Include docblocks for classes and methods.
+-   **Documentation**: Include docblocks for classes and methods, with explanations for all parameters, examples, and return values.
 
 ___
 
-### **20\. Additional Instructions**
+### **19\. Additional Instructions**
 
 -   **Element Selectors Management**: Maintain a consistent approach for element selectors.
 -   **Test Data Management**: Use data tables in Gherkin steps for input data when appropriate.
 -   **Logging and Reporting**: Implement logging within tests for better debugging.
 -   **Continuous Integration (CI) Considerations**: Ensure tests can be integrated into CI pipelines.
 -   **Performance Optimization**: Avoid unnecessary waits or sleeps; use proper synchronization methods.
+ - **BrowserStack Context**:
+    -   Ensure that BrowserStack capabilities are correctly set up in the `behat.yml` file for each scenario.
+    -   Use the `browserstack` session in your contexts to interact with BrowserStack.

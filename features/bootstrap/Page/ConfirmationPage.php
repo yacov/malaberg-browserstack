@@ -1,25 +1,42 @@
 <?php
 
-namespace Page;
+namespace Features\Bootstrap\Page;
+use Behat\Mink\Exception\ElementNotFoundException;
 use PHPUnit\Framework\Assert;
+use Behat\Mink\Session;
 
 
 class ConfirmationPage extends BasePage
 {
+
+    public function __construct(Session $session)
+    {
+        parent::__construct($session);
+    }
+
+    /**
+     * @throws ElementNotFoundException
+     */
     public function waitForPageToLoad(int $timeout = 5000): void
     {
         // Placeholder for element selector
-        $selector = 'ORDER_CONFIRMATION_MESSAGE_SELECTOR';
+        $selector = '.section-thank-you h1';
         $this->waitForElementVisible($selector);
     }
 
-    public function getOrderNumber()
+    /**
+     * @throws ElementNotFoundException
+     */
+    public function getOrderNumber(): string
     {
         // Placeholder for element selector
         $selector = 'ORDER_NUMBER_SELECTOR';
         return $this->findElement($selector)->getText();
     }
 
+    /**
+     * @throws ElementNotFoundException
+     */
     public function verifyOrderDetails($expectedData): void
     {
         // Verify billing address
@@ -27,7 +44,7 @@ class ConfirmationPage extends BasePage
         Assert::assertEquals($expectedData['shippingInfo'], $billingAddress, "Billing address does not match.");
 
         // Verify shipping address
-        $shippingAddress = $this->findElement('SHIPPING_ADDRESS_SELECTOR')->getText();
+        $shippingAddress = $this->findElement("//div[contains(text(), 'Shipping address')]/address")->getText();
         Assert::assertEquals($expectedData['shippingInfo'], $shippingAddress, "Shipping address does not match.");
 
         // Verify product name

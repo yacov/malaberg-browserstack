@@ -1,8 +1,6 @@
 {
     "require": {
         "friends-of-behat/mink-extension": "^2.7.5",
-        "friends-of-behat/symfony-extension": "^2.1",
-        "friends-of-behat/page-object-extension": "^0.3",
         "behat/mink-selenium2-driver": "^1.6",
         "behat/behat": "^3.12"
     },
@@ -14,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Features\\Bootstrap\\": "features/bootstrap/",
+            "Features\\Bootstrap\\": "Features/Bootstrap/",
             "": "lib/"
         }
     },
@@ -22,6 +20,10 @@
         "purchase": "vendor/bin/behat features/purchase.feature"
     },
     "require-dev": {
+        "dmore/chrome-mink-driver": "^2.8",
+        "friends-of-behat/page-object-extension": "0.3.2",
+        "friends-of-behat/service-container-extension": "^1.1",
+        "friends-of-behat/symfony-extension": "^2.6",
         "friends-of-behat/test-context": "^1.3"
     }
 }

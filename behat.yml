@@ -2,24 +2,15 @@ default:
   suites:
     default:
       paths:
-        - features
+        - Features
       contexts:
-        - FeatureContext
-        - BrowserStackContext
         - Features\Bootstrap\SharedDataContext
-        - Features\Bootstrap\MainPageContext:
-            - '@Features\Bootstrap\SharedDataContext'
-        - Features\Bootstrap\ProductPageContext:
-            - '@Features\Bootstrap\SharedDataContext'
-        - Features\Bootstrap\CartPageContext:
-            - '@Features\Bootstrap\SharedDataContext'
-        - Features\Bootstrap\CheckoutPageContext:
-            - '@Features\Bootstrap\SharedDataContext'
-        - Features\Bootstrap\ConfirmationPageContext:
-            - '@Features\Bootstrap\SharedDataContext'
+        - Features\Bootstrap\FeatureContext
+        - Behat\MinkExtension\Context\MinkContext
   extensions:
     Behat\MinkExtension:
       base_url: 'https://aeonstest.info'
+      default_session: browserstack
       sessions:
         browserstack:
           browser_stack:
@@ -31,7 +22,6 @@ default:
               build: "Behat Purchase Test"
               name: "Purchase Test on iPhone 13"
               os: "OS X"
-              os_version: "Monterey"
               device: "iPhone 13"
+              browserstack-debug: true
               emulator: false
-      default_session: browserstack

@@ -1,6 +1,6 @@
 <?php
 
-namespace Page;
+namespace Features\Bootstrap\Page;
 
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
@@ -22,6 +22,12 @@ abstract class BasePage
     protected Session $session;
 
     /**
+     * The shared data context instance.
+     * @var SharedDataContext
+     */
+    protected SharedDataContext $sharedData;
+
+    /**
      * Initializes the BasePage with a Mink session.
      *
      * @param Session $session The Mink session.
@@ -29,6 +35,11 @@ abstract class BasePage
     public function __construct(Session $session)
     {
         $this->session = $session;
+    }
+
+    protected function getSession(): Session
+    {
+        return $this->session;
     }
 
     /**
@@ -51,32 +62,37 @@ abstract class BasePage
     /**
      * Finds and returns a web element using the provided locator.
      *
-     * @param string $selector The CSS selector.
+     * @param string $selector The selector (CSS or XPath).
      * @param int $timeout The maximum time to wait in milliseconds.
+     * @param string $selectorType (css|xpath) The type of selector.
      * @return NodeElement The found element.
      * @throws ElementNotFoundException If the element is not found within the timeout.
      */
     protected function findElement(string $selector, int $timeout = 5000): NodeElement
     {
-        $this->waitForElementVisible($selector, $timeout);
-        $element = $this->session->getPage()->find('css', $selector);
-
+        $selectorType = $this->determineSelectorType($selector);
+        $page = $this->getSession()->getPage();
+        
+        $element = $this->getSession()->wait($timeout, "document.querySelector('$selector') !== null");
+        
         if (!$element) {
-            throw new ElementNotFoundException($this->session, 'element', 'css', $selector);
+            throw new ElementNotFoundException($this->getSession(), 'element', $selectorType, $selector);
         }
-
-        return $element;
+        
+        return $page->find($selectorType, $selector);
     }
 
     /**
      * Finds and returns a list of web elements using the provided locator.
      *
-     * @param string $selector The CSS selector.
+     * @param string $selector The selector (CSS or XPath).
+     * @param int $timeout The maximum time to wait in milliseconds.
      * @return NodeElement[] An array of found elements.
      */
     protected function findElements(string $selector): array
     {
-        return $this->session->getPage()->findAll('css', $selector);
+        $selectorType = $this->determineSelectorType($selector);
+        return $this->session->getPage()->findAll($selectorType, $selector);
     }
 
     /**
@@ -86,12 +102,25 @@ abstract class BasePage
      */
     protected function scrollToElement(NodeElement $element): void
     {
-        $function = <<<JS
-        (function(element) {
-            element.scrollIntoView({behavior: 'smooth', block: 'center'});
-        })(arguments[0]);
+        $script = <<<JS
+        function scrollToElement(element) {
+            if (element && typeof element.scrollIntoView === 'function') {
+                element.scrollIntoView({behavior: 'smooth', block: 'center'});
+                return true;
+            }
+            return false;
+        }
+        return scrollToElement(arguments[0]);
         JS;
-        $this->session->executeScript($function, [$element->getXpath()]);
+
+        $result = $this->getSession()->evaluateScript($script, [$element]);
+        
+        if (!$result) {
+            throw new \RuntimeException('Unable to scroll to element. Element may not be visible or may not exist.');
+        }
+
+        // Wait for scrolling to complete
+        $this->getSession()->wait(500);
     }
 
     /**
@@ -232,7 +261,22 @@ abstract class BasePage
      */
     public function switchToDefaultContent(): void
     {
-        $this->session->getDriver()->switchToIFrame();
+        try {
+            $this->session->getDriver()->switchToIFrame();
+        } catch (UnsupportedDriverActionException|DriverException $e) {
+
+        }
+    }
+
+    /**
+     * Determines the selector type based on its format.
+     *
+     * @param string $selector The selector string.
+     * @return string The selector type ('css' or 'xpath').
+     */
+    protected function determineSelectorType(string $selector): string
+    {
+        return preg_match('/^(?:\/|\(\/)/', $selector) ? 'xpath' : 'css';
     }
 
     /**
@@ -291,20 +335,21 @@ abstract class BasePage
     /**
      * Waits for an element to be visible on the page.
      *
-     * @param string $selector The CSS selector.
+     * @param string $selector The CSS or XPath selector.
      * @param int $timeout The maximum time to wait in milliseconds.
      * @throws ElementNotFoundException If the element is not visible within the timeout.
      */
     protected function waitForElementVisible(string $selector, int $timeout = 5000): void
     {
+        $selectorType = $this->determineSelectorType($selector);
         $endTime = microtime(true) + $timeout / 1000;
         while (microtime(true) < $endTime) {
-            $element = $this->session->getPage()->find('css', $selector);
+            $element = $this->session->getPage()->find($selectorType, $selector);
             if ($element && $element->isVisible()) {
                 return;
             }
             usleep(100000); // Wait 100ms before checking again
         }
-        throw new ElementNotFoundException($this->session, 'element', 'css', $selector);
+        throw new ElementNotFoundException($this->session, 'element', $selectorType, $selector);
     }
 }

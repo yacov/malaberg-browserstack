@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Page;
+namespace Features\Bootstrap\Page;
 
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ElementNotFoundException;
-
+use Behat\Mink\Session;
 /**
  * CartPage handles actions on the shopping cart page.
  */
@@ -17,6 +17,11 @@ class CartPage extends BasePage
      * @var string
      */
     protected string $url = 'https://aeonstest.info/cart/';
+
+    public function __construct(Session $session)
+    {
+        parent::__construct($session);
+    }
 
     /**
      * Retrieves the URL of the page.
@@ -265,6 +270,7 @@ class CartPage extends BasePage
 
     /**
      * Clicks the checkout button to proceed to the checkout page.
+     * @throws ElementNotFoundException
      */
     public function proceedToCheckout(): void
     {

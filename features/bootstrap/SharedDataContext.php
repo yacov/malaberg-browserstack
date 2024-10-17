@@ -1,10 +1,23 @@
 <?php
 
 namespace Features\Bootstrap;
+use Behat\Behat\Context\Context;
+use Behat\MinkExtension\Context\MinkContext;
 
-class SharedDataContext
+class SharedDataContext implements Context
 {
-    private array $data = [];
+    private static $instance = null;
+    private $data = [];
+
+    public function __construct() {}
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     public function set($key, $value): void
     {
@@ -35,5 +48,10 @@ class SharedDataContext
     public function getAll(): array
     {
         return $this->data;
+    }
+
+    public function cleanup(): void
+    {
+        $this->data = [];
     }
 }
