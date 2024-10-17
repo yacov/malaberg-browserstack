@@ -293,10 +293,9 @@ private function calculateExpectedTotal(string $sizeOption, int $quantity, strin
     /**
      * Finds and returns the 'Add to Cart' button element.
      *
-     * @return NodeElement The 'Add to Cart' button element.
      * @throws ElementNotFoundException If the button is not found.
      */
-    protected function getAddToCartButton(): NodeElement
+    protected function getAddToCartButton()
     {
         $selector = '#sylius-product-adding-to-cart button.add-product';
         return $this->findElement($selector);

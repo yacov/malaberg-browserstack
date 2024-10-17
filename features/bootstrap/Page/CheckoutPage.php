@@ -57,41 +57,50 @@ class CheckoutPage extends BasePage
      */
     public function isCheckoutPage(): bool
     {
-        return $this->isElementVisible('h1.checkout-title');
+        return $this->isElementVisible('//*[@class=\'checkout-title\']');
     }
 
     /**
      * Fills in the checkout form with the provided information.
      *
-     * @param string $email Customer's email address.
-     * @param string $firstName Customer's first name.
-     * @param string $lastName Customer's last name.
-     * @param string $phone Customer's phone number.
-     * @param string $address Customer's street address.
-     * @param string $city Customer's city.
-     * @param string $postcode Customer's postal code.
-     * @param string $country Customer's country (must match an option in the dropdown).
+     * @param array $shippingInfo An array containing shipping information.
      * @throws ElementNotFoundException
      */
-    public function fillInCheckoutForm(
-        string $email,
-        string $firstName,
-        string $lastName,
-        string $phone,
-        string $address,
-        string $city,
-        string $postcode,
-        string $country
-    ): void {
-        $this->enterText('#app_one_page_checkout_customer_email', $email);
-        $this->enterText('#app_one_page_checkout_billingAddress_firstName', $firstName);
-        $this->enterText('#app_one_page_checkout_billingAddress_lastName', $lastName);
-        $this->enterText('#app_one_page_checkout_billingAddress_phoneNumber', $phone);
-        $this->enterText('#app_one_page_checkout_billingAddress_street', $address);
-        $this->enterText('#app_one_page_checkout_billingAddress_city', $city);
-        $this->enterText('#app_one_page_checkout_billingAddress_postcode', $postcode);
-        $this->selectDropdownOption('#app_one_page_checkout_billingAddress_countryCode', $country);
+    public function fillInCheckoutForm(array $shippingInfo): void
+    {
+        try {
+            $this->enterText('#app_one_page_checkout_customer_email', $shippingInfo['Email'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_firstName', $shippingInfo['FirstName'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_lastName', $shippingInfo['LastName'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_phoneNumber', $shippingInfo['Phone'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_street', $shippingInfo['Address'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_city', $shippingInfo['City'] ?? '');
+            $this->enterText('#app_one_page_checkout_billingAddress_postcode', $shippingInfo['Postcode'] ?? '');
+            $this->selectDropdownOption('#app_one_page_checkout_billingAddress_countryCode', $shippingInfo['Country'] ?? '');
+        } catch (\Exception $e) {
+            throw new \Exception("Error filling in checkout form: " . $e->getMessage());
+        }
     }
+
+
+    public function useSameAddressForBillingAndShipping(): void
+    {
+        if (!$this->isSameAsBillingAddressChecked()) {
+            $this->findElement('#app_one_page_checkout_differentShippingAddress_0')->click();
+        }
+    }
+
+    public function isSameAsBillingAddressChecked(): bool
+    {
+        $element = $this->findElement('#app_one_page_checkout_differentShippingAddress_0');
+        return $element->isSelected();
+    }
+
+    public function verifyShippingAddressSelection(): bool
+    {
+        return $this->isSameAsBillingAddressChecked();
+    }
+
 
     /**
      * Checks if an element is visible on the page.
@@ -112,14 +121,13 @@ class CheckoutPage extends BasePage
 
     /**
      * Waits for the checkout page to load completely.
-     * @param string $selector The selector (CSS or XPath).
      * @param int $timeout The maximum time to wait in milliseconds.
      * @throws ElementNotFoundException
      */
     public function waitForPageToLoad(int $timeout = 10000): void
     {
         parent::waitForPageToLoad($timeout);
-        $this->waitForElementVisible('h1.checkout-title', $timeout);
+        $this->waitForElementVisible('//*[@class=\'checkout-title\']', $timeout);
     }
 
     /**
@@ -141,9 +149,12 @@ class CheckoutPage extends BasePage
      */
     public function enterText(string $selector, string $text): void
     {
-        $element = $this->findElement($selector);
-        $this->scrollToElement($element);
-        $element->type($text);
+        try {
+            $element = $this->findElement($selector);
+            $element->setValue($text);
+        } catch (\Exception $e) {
+            throw new \Exception("Error entering text for selector '$selector': " . $e->getMessage());
+        }
     }
 
     /**
@@ -156,14 +167,13 @@ class CheckoutPage extends BasePage
     public function selectDropdownOption(string $selector, string $optionText): void
     {
         $element = $this->findElement($selector);
-        $this->scrollToElement($element);
         $element->selectOption($optionText);
     }
 
 
     public function getPageTitle(): string
     {
-        return $this->session->getPage()->find('css', '#app_one_page_checkout h2')->getText();
+        return $this->session->getPage()->find('xpath', '//*[@id=\'app_one_page_checkout\']//h2')->getText();
     }
 
     /**
@@ -171,15 +181,55 @@ class CheckoutPage extends BasePage
      */
     public function getShippingCost(): string
     {
-        // Placeholder for element selector
-        $selector = '.order-summary-component .ch-shipping-value span';
+        $selector = ".order-summary-component .ch-shipping-value span";
         return $this->findElement($selector)->getText();
     }
+
+    /**
+ * Selects a shipping method and verifies if it's checked.
+ *
+ * @param string $method The shipping method to select (e.g., "Domestic tracked")
+ * @throws \Exception If the shipping method is not found or cannot be selected
+ */
+public function selectShippingMethod(string $method): void
+{
+    $selector = "//span[contains(text(), '$method')]/../../input[@checked='checked']";
+    
+    try {
+        $element = $this->getSession()->getPage()->find('xpath', $selector);
+        if (!$element) {
+            throw new ElementNotFoundException($this->getSession(), 'radio button', 'xpath', $selector);
+        }
+        if (!$element->isSelected()) {
+            $element->click();
+        }
+        
+        if (!$this->isShippingMethodSelected($method)) {
+            throw new \Exception("Failed to select shipping method: $method");
+        }
+    } catch (ElementNotFoundException $e) {
+        throw new \Exception("Shipping method not found: $method");
+    }
+}
+
+    /**
+     * Verifies if a specific shipping method is selected.
+     *
+     * @param string $method The shipping method to verify (e.g., "Domestic tracked")
+     * @return bool True if the specified method is selected, false otherwise
+     */
+    public function isShippingMethodSelected(string $method): bool
+    {
+        $selector = "//span[contains(text(), '$method')]/../../input[@checked='checked']";
+    
+    $element = $this->getSession()->getPage()->find('xpath', $selector);
+        return $element !== null;
+    }   
 
     public function isProcessingPageDisplayed(): bool
     {
         // Placeholder for element selector
-        $selector = 'PROCESSING_ICON_SELECTOR';
+        $selector = '//*[@class=\'PROCESSING_ICON_SELECTOR\']';
         return $this->isElementVisible($selector);
     }
 
@@ -189,27 +239,32 @@ class CheckoutPage extends BasePage
     public function completePurchase(): void
     {
         // Placeholder for element selector
-        $selector = '.checkout-main button[type=\'submit\']';
+        $selector = '//*[@class=\'checkout-main\']//button[@type=\'submit\']';
         $this->findElement($selector)->click();
     }
 
     public function isShippingMethodDisplayed(): bool
     {
-        return $this->isElementVisible('.shipping-method-selector');
+        return $this->isElementVisible('//*[@class=\'shipping-method-selector\']');
     }
 
     public function isShippingCostDisplayed(): bool
     {
-        return $this->isElementVisible('.shipping-cost-display');
+        return $this->isElementVisible('//*[@class=\'shipping-cost-display\']');
     }
 
     public function isOrderConfirmationPageDisplayed(): bool
     {
-        return $this->isElementVisible('.order-confirmation-header');
+        return $this->isElementVisible('//*[@class=\'order-confirmation-header\']');
     }
 
     public function getOrderNumber(): string
     {
-        return $this->findElement('.order-number')->getText();
+        return $this->findElement('//*[@class=\'order-number\']')->getText();
+    }
+
+    public function waitForCheckoutForm($timeout = 10000)
+    {
+        $this->waitForElementVisible('#app_one_page_checkout_customer_email', $timeout);
     }
 }

@@ -17,11 +17,10 @@ default:
             username: 'iakovvolfkovich_F75ojQ'
             access_key: 'HYAZ4DUHsvFrouzKZqyj'
             capabilities:
-              browser: 'safari'
+              browser: 'chrome'
               project: "Aeons Test Project"
               build: "Behat Purchase Test"
-              name: "Purchase Test on iPhone 13"
-              os: "OS X"
-              device: "iPhone 13"
+              name: "Purchase Test on Chrome"
+              os: "Windows"
               browserstack-debug: true
               emulator: false

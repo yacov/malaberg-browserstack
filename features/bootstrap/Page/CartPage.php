@@ -274,8 +274,8 @@ class CartPage extends BasePage
      */
     public function proceedToCheckout(): void
     {
-        $selector = '.checkout-btn';
-        $this->clickElement($selector);
+        $element = $this->findElement('button.checkout-btn');
+        $element->click();
     }
 
     /**

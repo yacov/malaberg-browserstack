@@ -391,9 +391,14 @@ class FeatureContext extends RawMinkContext implements Context
      */
     public function iFillInTheShippingInformationWith(TableNode $table): void
     {
-        $shippingInfo = $table->getRowsHash();
-        $this->checkoutPage->fillInCheckoutForm($shippingInfo);
-       // SharedDataContext::getInstance()->set('shippingInfo', $shippingInfo);
+        try {
+            $this->checkoutPage->waitForCheckoutForm();
+            $shippingInfo = $table->getRowsHash();
+            $this->checkoutPage->fillInCheckoutForm($shippingInfo);
+            SharedDataContext::getInstance()->set('shippingInfo', $shippingInfo);
+        } catch (\Exception $e) {
+            throw new \Exception("Error filling in shipping information: " . $e->getMessage());
+        }
     }
 
     /**
@@ -401,7 +406,7 @@ class FeatureContext extends RawMinkContext implements Context
      */
     public function iChooseToUseTheSameAddressForBilling(): void
     {
-        $this->checkoutPage->useSameAddressForBilling();
+        $this->checkoutPage->useSameAddressForBillingAndShipping();
     }
 
     /**
@@ -414,13 +419,20 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * @Then /^The shipping method and cost are displayed$/
+     * @Then /^The shipping method "([^"]*)" should be selected$/
      */
-    public function theShippingMethodAndCostAreDisplayed(): void
+    public function theShippingMethodShouldBeSelected($method): void
     {
-        if (!$this->checkoutPage->isShippingMethodDisplayed()) {
-            throw new \Exception("Shipping method is not displayed.");
+        if (!$this->checkoutPage->isShippingMethodSelected($method)) {
+            throw new \Exception("The shipping method '$method' is not selected.");
         }
+    }
+
+    /**
+     * @Then /^The shipping cost is displayed$/
+     */
+    public function theShippingCostIsDisplayed(): void
+    {
         if (!$this->checkoutPage->isShippingCostDisplayed()) {
             throw new \Exception("Shipping cost is not displayed.");
         }
@@ -546,5 +558,7 @@ class FeatureContext extends RawMinkContext implements Context
     {
         return $this->sharedData[$key] ?? null;
     }
+
+ 
 
 }

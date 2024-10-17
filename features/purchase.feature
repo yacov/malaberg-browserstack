@@ -10,20 +10,22 @@ Feature: Product Purchase
               And I set the quantity to "3 Jars"
              When I add the product to the cart
              When I proceed to checkout
-             When I fill in the shipping information with:
-                  | Name     | Alice Johnson  |
-                  | Address  | 789 Oak St     |
-                  | City     | Manchester     |
-                  | Postcode | M1 1AA         |
-                  | Country  | UNITED KINGDOM |
+              And I fill in the shipping information with:
+                  | Email     | alice.johnson@example.com |
+                  | FirstName | Alice                     |
+                  | LastName  | Johnson                   |
+                  | Phone     | 1234567890                |
+                  | Address   | 789 Oak St                |
+                  | City      | Manchester                |
+                  | Postcode  | M1 1AA                    |
+                  | Country   | GB                        |
               And I use the same address for billing
-              And I select "Domestic tracked" as the shipping method
-              And I verify the shipping cost is "£X.XX"
-              And I enter the payment details:
+             Then The shipping method "Domestic tracked" should be selected
+              And I verify the shipping cost is "FREE"
+             When I enter the payment details:
                   | Card number | 4242424242424242 |
                   | Expiration  | 12/26            |
                   | CVC         | 123              |
               And I complete the purchase
-             Then I should see the order processing page
               And I wait for the order confirmation page to load
-              And I verify the order details are correct
+             Then I verify the order details are correct
